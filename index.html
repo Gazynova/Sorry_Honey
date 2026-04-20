@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I'm So Sorry 💕</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #FFD1DC;
+    --cream: #FFFDD0;
+    --gold: #D4A017;
+    --gold-light: #F5C842;
+    --deep-pink: #FF8FA3;
+    --blush: #FFB3C6;
+    --lavender: #E8D5F5;
+    --soft-purple: #C3A6E8;
+    --white: #FFFFFF;
+    --text-dark: #5C3D4E;
+    --text-mid: #8B5C72;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(135deg, #FFD1DC 0%, #FFFDD0 50%, #E8D5F5 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' fill='%23FF8FA3' opacity='0.8'/%3E%3C/svg%3E") 12 12, auto;
+  }
+
+  h1, h2, h3 { font-family: 'Dancing Script', cursive; }
+
+  /* ===== CONFETTI ===== */
+  #confetti-canvas {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 999;
+  }
+
+  /* ===== FLOATING HEARTS ===== */
+  .floating-hearts-overlay {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 998;
+    display: none;
+  }
+  .floating-hearts-overlay.active { display: block; }
+  .fh {
+    position: absolute;
+    font-size: 2rem;
+    animation: floatUp 3s ease-in forwards;
+    opacity: 0;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0.5); opacity: 1; }
+    100% { transform: translateY(-20px) scale(1.2); opacity: 0; }
+  }
+
+  /* ===== HERO SECTION ===== */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 20%, rgba(255,143,163,0.3) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(195,166,232,0.3) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-puppy {
+    width: 160px; height: 160px;
+    margin: 0 auto 1.5rem;
+    position: relative;
+  }
+
+  /* CSS Puppy illustration */
+  .puppy-svg {
+    width: 100%; height: 100%;
+    animation: puppySad 2s ease-in-out infinite;
+  }
+  @keyframes puppySad {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-8px) rotate(2deg); }
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    color: var(--text-dark);
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    animation: wobble 3s ease-in-out infinite;
+    text-shadow: 2px 2px 0px rgba(255,143,163,0.4);
+  }
+  @keyframes wobble {
+    0%, 100% { transform: rotate(-1deg) scale(1); }
+    25% { transform: rotate(1.5deg) scale(1.02); }
+    50% { transform: rotate(-0.5deg) scale(0.98); }
+    75% { transform: rotate(1deg) scale(1.01); }
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-mid);
+    margin-bottom: 2.5rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+
+  .start-btn {
+    background: linear-gradient(135deg, var(--deep-pink), #FF6B8A);
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(255,107,138,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.03em;
+  }
+  .start-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 35px rgba(255,107,138,0.5);
+  }
+  .start-btn:active { transform: translateY(-1px) scale(1.02); }
+
+  .sparkles {
+    display: flex; gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+    font-size: 1.5rem;
+    animation: sparkleFloat 2s ease-in-out infinite;
+  }
+  @keyframes sparkleFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  /* ===== SECTION STYLES ===== */
+  section {
+    padding: 4rem 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 6vw, 3rem);
+    color: var(--text-dark);
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 0px rgba(255,143,163,0.3);
+  }
+
+  /* ===== GOOF CARD ===== */
+  .goof-card {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 8px 40px rgba(255,143,163,0.2);
+    border: 2px solid rgba(255,209,220,0.6);
+    text-align: center;
+  }
+
+  .goof-emoji { font-size: 4rem; margin-bottom: 1rem; display: block; animation: bounce 1s ease-in-out infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+  .goof-text {
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+
+  .guilt-label {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.4rem;
+    color: var(--text-dark);
+    margin-bottom: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .guilt-track {
+    background: rgba(255,209,220,0.4);
+    border-radius: 50px;
+    height: 28px;
+    overflow: hidden;
+    border: 2px solid rgba(255,143,163,0.3);
+    position: relative;
+  }
+
+  .guilt-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #FF8FA3, #FF5C7A, var(--gold));
+    border-radius: 50px;
+    transition: width 2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .guilt-fill::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+  @keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+
+  .guilt-fill-text {
+    position: absolute;
+    right: 10px; top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+
+  /* ===== PHOTO GRID ===== */
+  #gallery { background: transparent; }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media(min-width: 600px) {
+    .photo-grid { grid-template-columns: repeat(3, 1fr); }
+    .photo-grid .polaroid:nth-child(5) { grid-column: 2; }
+  }
+
+  .polaroid {
+    background: white;
+    padding: 12px 12px 40px;
+    border-radius: 4px;
+    box-shadow: 0 6px 20px rgba(100,60,80,0.15);
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+    position: relative;
+    transform: rotate(var(--rot, -2deg));
+  }
+
+  .polaroid:hover, .polaroid.tapped {
+    transform: rotate(0deg) scale(1.08) !important;
+    box-shadow: 0 16px 40px rgba(100,60,80,0.25);
+    z-index: 10;
+  }
+
+  .polaroid:hover .caption, .polaroid.tapped .caption {
+    opacity: 1; transform: translateY(0);
+  }
+
+  .photo-inner {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .photo-placeholder {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .photo-placeholder span {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+    text-align: center;
+    padding: 0 0.5rem;
+  }
+
+  .caption {
+    position: absolute;
+    bottom: 8px; left: 0; right: 0;
+    text-align: center;
+    font-family: 'Dancing Script', cursive;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 0.3s, transform 0.3s;
+    padding: 0 5px;
+  }
+
+  /* ===== CAKE SECTION ===== */
+  #cake-section {
+    text-align: center;
+  }
+
+  .cake-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    margin: 1rem auto;
+  }
+
+  .cake-svg { display: block; transition: transform 0.2s; }
+  .cake-container:hover .cake-svg { transform: scale(1.05); }
+
+  .knife {
+    position: absolute;
+    top: -30px; left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    font-size: 3rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .knife.cutting {
+    top: 80px;
+    opacity: 1;
+    transform: translateX(-50%) rotate(45deg) scale(1.2);
+  }
+
+  .cake-message {
+    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,209,220,0.8));
+    border: 2px solid var(--blush);
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    margin-top: 1.5rem;
+    font-size: 1.2rem;
+    font-family: 'Dancing Script', cursive;
+    color: var(--text-dark);
+    transform: scale(0) rotate(-5deg);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 8px 30px rgba(255,143,163,0.3);
+  }
+  .cake-message.revealed {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+
+  .tap-hint {
+    font-size: 0.9rem;
+    color: var(--text-mid);
+    margin-top: 0.75rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  /* ===== FOOTER / FORGIVE ===== */
+  #forgive-section {
+    text-align: center;
+    padding-bottom: 6rem;
+  }
+
+  .forgive-subtitle {
+    color: var(--text-mid);
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    min-height: 80px;
+    align-items: center;
+  }
+
+  .yes-btn {
+    background: linear-gradient(135deg, #FF8FA3, var(--deep-pink));
+    color: white;
+    border: none;
+    padding: 1rem 3rem;
+    border-radius: 50px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(255,143,163,0.4);
+    transition: transform 0.3s, box-shadow 0.3s;
+    letter-spacing: 0.05em;
+  }
+  .yes-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 35px rgba(255,143,163,0.6);
+  }
+
+  .no-btn {
+    background: rgba(255,255,255,0.7);
+    color: var(--text-mid);
+    border: 2px solid rgba(255,143,163,0.4);
+    padding: 1rem 3rem;
+    border-radius: 50px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s;
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  .final-message {
+    display: none;
+    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,209,220,0.9));
+    border: 3px solid var(--blush);
+    border-radius: 24px;
+    padding: 2rem;
+    margin-top: 2rem;
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .final-message.show { display: block; }
+  @keyframes popIn { 0%{transform:scale(0) rotate(-10deg);opacity:0} 100%{transform:scale(1) rotate(0deg);opacity:1} }
+
+  .final-message h3 {
+    font-size: 2rem;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+  }
+  .final-message p {
+    color: var(--text-mid);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  /* ===== DIVIDER ===== */
+  .divider {
+    text-align: center;
+    padding: 1rem;
+    font-size: 1.5rem;
+    letter-spacing: 0.5rem;
+  }
+
+  /* ===== SCROLL REVEAL ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stars background */
+  .stars-bg {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0;
+    overflow: hidden;
+  }
+  .star {
+    position: absolute;
+    width: 4px; height: 4px;
+    background: rgba(255,143,163,0.5);
+    border-radius: 50%;
+    animation: twinkle var(--d, 3s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+  @keyframes twinkle { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:1;transform:scale(1.5)} }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+<div class="floating-hearts-overlay" id="heartsOverlay"></div>
+
+<div class="stars-bg" id="stars"></div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-puppy">
+    <svg class="puppy-svg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Ears -->
+      <ellipse cx="45" cy="65" rx="22" ry="30" fill="#D4A0B0" transform="rotate(-15 45 65)"/>
+      <ellipse cx="115" cy="65" rx="22" ry="30" fill="#D4A0B0" transform="rotate(15 115 65)"/>
+      <ellipse cx="45" cy="67" rx="14" ry="22" fill="#E8C0CC" transform="rotate(-15 45 67)"/>
+      <ellipse cx="115" cy="67" rx="14" ry="22" fill="#E8C0CC" transform="rotate(15 115 67)"/>
+      <!-- Head -->
+      <ellipse cx="80" cy="90" rx="48" ry="45" fill="#F5C5D0"/>
+      <!-- Face shading -->
+      <ellipse cx="80" cy="95" rx="30" ry="25" fill="#F0B8C5" opacity="0.4"/>
+      <!-- Snout -->
+      <ellipse cx="80" cy="108" rx="22" ry="16" fill="#E8ADB8"/>
+      <!-- Nose -->
+      <ellipse cx="80" cy="100" rx="9" ry="7" fill="#C47A8A"/>
+      <ellipse cx="77" cy="98" rx="3" ry="2" fill="white" opacity="0.6"/>
+      <!-- Sad eyes -->
+      <ellipse cx="60" cy="82" rx="10" ry="9" fill="white"/>
+      <ellipse cx="100" cy="82" rx="10" ry="9" fill="white"/>
+      <ellipse cx="60" cy="84" rx="7" ry="7" fill="#5C3D4E"/>
+      <ellipse cx="100" cy="84" rx="7" ry="7" fill="#5C3D4E"/>
+      <ellipse cx="57" cy="82" rx="2.5" ry="2.5" fill="white"/>
+      <ellipse cx="97" cy="82" rx="2.5" ry="2.5" fill="white"/>
+      <!-- Sad eyebrows -->
+      <path d="M52 73 Q60 70 68 73" stroke="#C47A8A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M92 73 Q100 70 108 73" stroke="#C47A8A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Tear drops -->
+      <ellipse cx="55" cy="93" rx="3" ry="4" fill="#AED6F1" opacity="0.8"/>
+      <ellipse cx="105" cy="93" rx="3" ry="4" fill="#AED6F1" opacity="0.8"/>
+      <!-- Mouth sad -->
+      <path d="M68 113 Q80 108 92 113" stroke="#C47A8A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Blush -->
+      <ellipse cx="45" cy="98" rx="10" ry="6" fill="#FFB3C6" opacity="0.5"/>
+      <ellipse cx="115" cy="98" rx="10" ry="6" fill="#FFB3C6" opacity="0.5"/>
+      <!-- Body -->
+      <ellipse cx="80" cy="140" rx="35" ry="20" fill="#F5C5D0"/>
+      <!-- Paws -->
+      <ellipse cx="58" cy="152" rx="14" ry="10" fill="#F5C5D0"/>
+      <ellipse cx="102" cy="152" rx="14" ry="10" fill="#F5C5D0"/>
+      <ellipse cx="54" cy="154" rx="4" ry="3" fill="#E8ADB8"/>
+      <ellipse cx="62" cy="156" rx="4" ry="3" fill="#E8ADB8"/>
+      <ellipse cx="98" cy="154" rx="4" ry="3" fill="#E8ADB8"/>
+      <ellipse cx="106" cy="156" rx="4" ry="3" fill="#E8ADB8"/>
+    </svg>
+  </div>
+
+  <h1 class="hero-title">I'm So Sorry,<br>My Love 💕</h1>
+  <p class="hero-subtitle">A heartfelt apology, delivered with all the love in the world 🌸</p>
+
+  <button class="start-btn" id="startBtn" onclick="triggerConfetti()">
+    ✨ Begin the Apology ✨
+  </button>
+
+  <div class="sparkles">💔 🌸 💔 🌸 💔</div>
+</section>
+
+<div class="divider">🌸 ✨ 🌸</div>
+
+<!-- THE GOOF SECTION -->
+<section id="goof-section">
+  <h2 class="section-title reveal">Why I'm a Certified Goof 🙈</h2>
+  <div class="goof-card reveal">
+    <span class="goof-emoji">🎂</span>
+    <p class="goof-text">
+      Of all the things I've done wrong in my life — and the list is <em>long</em> — missing your cake cutting might just be the one that haunts me forever. Your birthday is the most important day of the year, and I let you down at the exact moment you deserved someone cheering the loudest.
+      <br><br>
+      I watched those photos and felt my heart sink. You looked absolutely radiant, the cake looked divine, and I… was not there. That's not okay. You deserved better. You deserve the world.
+    </p>
+
+    <div class="guilt-label">
+      <span>Guilt Level</span>
+      <span id="guiltPercent">0%</span>
+    </div>
+    <div class="guilt-track">
+      <div class="guilt-fill" id="guiltBar">
+        <span class="guilt-fill-text">Maximum Guilt</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider">📸 ✨ 📸</div>
+
+<!-- PHOTO GALLERY -->
+<section id="gallery">
+  <h2 class="section-title reveal">You Looked Absolutely Stunning 👑</h2>
+  <p style="text-align:center;color:var(--text-mid);margin-bottom:2rem;font-size:0.95rem;" class="reveal">
+    (Add your photos here — hover or tap each one 💕)
+  </p>
+
+  <div class="photo-grid">
+    <div class="polaroid reveal" style="--rot:-3deg" onclick="this.classList.toggle('tapped')">
+      <div class="photo-inner">
+        <img src="Images/Sorry1.jpeg" alt="Photo 1" style="width:100%;height:100%;object-fit:cover;border-radius:2px;">
+      </div>
+      <div class="caption">The Birthday Queen 👑</div>
+    </div>
+
+    <div class="polaroid reveal" style="--rot:2deg" onclick="this.classList.toggle('tapped')">
+      <div class="photo-inner">
+        <img src="Images/Sorry2.jpeg" alt="Photo 2" style="width:100%;height:100%;object-fit:cover;border-radius:2px;">
+      </div>
+      <div class="caption">Wish I was there 🥺</div>
+    </div>
+
+    <div class="polaroid reveal" style="--rot:-1deg" onclick="this.classList.toggle('tapped')">
+      <div class="photo-inner">
+        <img src="Images/Sorry3.jpeg" alt="Photo 3" style="width:100%;height:100%;object-fit:cover;border-radius:2px;">
+      </div>
+      <div class="caption">You're golden ✨</div>
+    </div>
+
+    <div class="polaroid reveal" style="--rot:3deg" onclick="this.classList.toggle('tapped')">
+      <div class="photo-inner">
+        <img src="Images/Sorry4.jpeg" alt="Photo 4" style="width:100%;height:100%;object-fit:cover;border-radius:2px;">
+      </div>
+      <div class="caption">Pure joy 💕</div>
+    </div>
+
+    <div class="polaroid reveal" style="--rot:-2.5deg" onclick="this.classList.toggle('tapped')">
+      <div class="photo-inner">
+        <img src="Images/Sorry5.jpeg" alt="Photo 5" style="width:100%;height:100%;object-fit:cover;border-radius:2px;">
+      </div>
+      <div class="caption">Glowing as always 🌸</div>
+    </div>
+
+    <div class="polaroid reveal" style="--rot:1.5deg" onclick="this.classList.toggle('tapped')">
+      <div class="photo-inner">
+        <img src="Images/Sorry6.jpeg" alt="Photo 6" style="width:100%;height:100%;object-fit:cover;border-radius:2px;">
+      </div>
+      <div class="caption">Miss you every day 🎉</div>
+    </div>
+
+    <div class="polaroid reveal" style="--rot:-2deg" onclick="this.classList.toggle('tapped')">
+      <div class="photo-inner">
+        <img src="Images/Sorry7.jpeg" alt="Photo 7" style="width:100%;height:100%;object-fit:cover;border-radius:2px;">
+      </div>
+      <div class="caption">Beautiful moments 💫</div>
+    </div>
+
+    <div class="polaroid reveal" style="--rot:1deg" onclick="this.classList.toggle('tapped')">
+      <div class="photo-inner">
+        <img src="Images/Sorry8.jpeg" alt="Photo 8" style="width:100%;height:100%;object-fit:cover;border-radius:2px;">
+      </div>
+      <div class="caption">Simply radiant ✨</div>
+    </div>
+
+    <div class="polaroid reveal" style="--rot:-1.5deg" onclick="this.classList.toggle('tapped')">
+      <div class="photo-inner">
+        <img src="Images/Sorry9.jpeg" alt="Photo 9" style="width:100%;height:100%;object-fit:cover;border-radius:2px;">
+      </div>
+      <div class="caption">Forever stunning 💕</div>
+    </div>
+  </div>
+
+  <p style="text-align:center;margin-top:1.5rem;color:var(--text-mid);font-size:0.85rem;font-style:italic;">
+    Replace the placeholder colors above with your actual photos by editing the HTML 📷
+  </p>
+</section>
+
+<div class="divider">🎂 ✨ 🎂</div>
+
+<!-- CAKE CUTTING -->
+<section id="cake-section">
+  <h2 class="section-title reveal">Your Virtual Cake Cutting 🎂</h2>
+  <p class="forgive-subtitle reveal">You deserve this, even if it's digital. Click the cake!</p>
+
+  <div style="display:flex;flex-direction:column;align-items:center;">
+    <div class="cake-container reveal" id="cakeContainer" onclick="cutCake()">
+      <svg class="cake-svg" width="220" height="200" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Plate -->
+        <ellipse cx="110" cy="182" rx="90" ry="12" fill="#E8D0D8"/>
+        <!-- Bottom tier -->
+        <rect x="30" y="140" width="160" height="45" rx="8" fill="#FFB3C6"/>
+        <ellipse cx="110" cy="140" rx="80" ry="12" fill="#FFC5D3"/>
+        <ellipse cx="110" cy="185" rx="80" ry="10" fill="#E8A0B8"/>
+        <!-- Frosting drips bottom -->
+        <path d="M30 148 Q40 138 50 148 Q60 138 70 148 Q80 138 90 148 Q100 138 110 148 Q120 138 130 148 Q140 138 150 148 Q160 138 170 148 Q180 138 190 148" fill="#FFFDD0" stroke="#FFFDD0" stroke-width="8" stroke-linecap="round"/>
+        <!-- Middle tier -->
+        <rect x="50" y="95" width="120" height="50" rx="8" fill="#FF8FA3"/>
+        <ellipse cx="110" cy="95" rx="60" ry="10" fill="#FFA0B4"/>
+        <!-- Frosting drips middle -->
+        <path d="M50 103 Q62 93 74 103 Q86 93 98 103 Q110 93 122 103 Q134 93 146 103 Q158 93 170 103" fill="#FFFDD0" stroke="#FFFDD0" stroke-width="8" stroke-linecap="round"/>
+        <!-- Top tier -->
+        <rect x="72" y="55" width="76" height="45" rx="8" fill="#C3A6E8"/>
+        <ellipse cx="110" cy="55" rx="38" ry="8" fill="#D0B8F0"/>
+        <!-- Frosting drips top -->
+        <path d="M72 63 Q82 53 92 63 Q102 53 112 63 Q122 53 132 63 Q142 53 148 63" fill="#FFFDD0" stroke="#FFFDD0" stroke-width="8" stroke-linecap="round"/>
+        <!-- Candles -->
+        <rect x="90" y="32" width="8" height="22" rx="4" fill="#FF8FA3"/>
+        <rect x="108" y="28" width="8" height="26" rx="4" fill="#C3A6E8"/>
+        <rect x="126" y="32" width="8" height="22" rx="4" fill="#F5C842"/>
+        <!-- Flames -->
+        <ellipse cx="94" cy="30" rx="5" ry="7" fill="#FF6B35" opacity="0.9"/>
+        <ellipse cx="94" cy="29" rx="3" ry="4" fill="#FFD700"/>
+        <ellipse cx="112" cy="26" rx="5" ry="7" fill="#FF6B35" opacity="0.9"/>
+        <ellipse cx="112" cy="25" rx="3" ry="4" fill="#FFD700"/>
+        <ellipse cx="130" cy="30" rx="5" ry="7" fill="#FF6B35" opacity="0.9"/>
+        <ellipse cx="130" cy="29" rx="3" ry="4" fill="#FFD700"/>
+        <!-- Stars decorations -->
+        <text x="50" y="170" font-size="14" fill="#D4A017">★</text>
+        <text x="158" y="170" font-size="14" fill="#D4A017">★</text>
+        <text x="65" y="125" font-size="12" fill="#FFFDD0">✦</text>
+        <text x="148" y="125" font-size="12" fill="#FFFDD0">✦</text>
+      </svg>
+      <div class="knife" id="knife">🔪</div>
+    </div>
+
+    <p class="tap-hint" id="tapHint">👆 Tap the cake to cut it!</p>
+
+    <div class="cake-message" id="cakeMsg">
+      🎂 I owe you 100 real cakes and 1,000 hugs! 🎂<br>
+      <span style="font-size:1rem;font-family:'Quicksand',sans-serif;color:var(--text-mid);display:block;margin-top:0.5rem;">
+        Every slice is a piece of my heart. Happy belated birthday, my love. 💕
+      </span>
+    </div>
+  </div>
+</section>
+
+<div class="divider">💕 ✨ 💕</div>
+
+<!-- FORGIVE ME -->
+<section id="forgive-section">
+  <h2 class="section-title reveal">So... Forgive Me? 🥺</h2>
+  <p class="forgive-subtitle reveal">Choose wisely (please choose wisely 🙏)</p>
+
+  <div class="btn-group reveal" id="btnGroup">
+    <button class="yes-btn" onclick="onYes()">Yes, I Forgive You 💕</button>
+    <button class="no-btn" id="noBtn" onmousemove="runAway(event)" onclick="runAway(event)">
+      Hmm, Maybe Not 😤
+    </button>
+  </div>
+
+  <div class="final-message" id="finalMsg">
+    <h3>She said YES! 🎉💕</h3>
+    <p>
+      Dinner is on me for the rest of the month! 🍽️<br><br>
+      Check your WhatsApp for the details! I love you so much, and I promise to never miss a single moment of your joy again. You are my everything. 💕🌸✨
+    </p>
+    <div style="font-size:2rem;margin-top:1rem;letter-spacing:0.3rem;">💕 🌸 ✨ 🎂 👑</div>
+  </div>
+</section>
+
+<script>
+  // ===== STARS =====
+  const starsEl = document.getElementById('stars');
+  for(let i=0; i<30; i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*3}s;--delay:${Math.random()*3}s;`;
+    starsEl.appendChild(s);
+  }
+
+  // ===== CONFETTI =====
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let animating = false;
+
+  function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function triggerConfetti(){
+    particles = [];
+    const colors = ['#FF8FA3','#FFD1DC','#C3A6E8','#F5C842','#FF6B8A','#FFFDD0'];
+    const shapes = ['💔','💕','🌸','✨','🎊'];
+    for(let i=0; i<120; i++){
+      particles.push({
+        x: Math.random()*canvas.width,
+        y: -20,
+        vx: (Math.random()-0.5)*6,
+        vy: Math.random()*4+2,
+        size: Math.random()*20+10,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        shape: shapes[Math.floor(Math.random()*shapes.length)],
+        rotation: Math.random()*360,
+        rotSpeed: (Math.random()-0.5)*5,
+        life: 1,
+        decay: 0.008+Math.random()*0.005,
+        heartPhase: Math.random() < 0.5
+      });
+    }
+    if(!animating){ animating=true; animateConfetti(); }
+
+    // Scroll to goof section after delay
+    setTimeout(()=>{
+      document.getElementById('goof-section').scrollIntoView({behavior:'smooth'});
+      animateGuiltBar();
+    }, 1500);
+  }
+
+  function animateConfetti(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles = particles.filter(p => p.life > 0);
+    particles.forEach(p => {
+      ctx.save();
+      ctx.globalAlpha = p.life;
+      ctx.font = `${p.size}px serif`;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation*Math.PI/180);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      // Convert broken hearts to whole hearts over time
+      const displayShape = (p.heartPhase && p.life > 0.5) ? '💔' : (p.shape === '💔' ? '💕' : p.shape);
+      ctx.fillText(displayShape, 0, 0);
+      ctx.restore();
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.1;
+      p.rotation += p.rotSpeed;
+      p.life -= p.decay;
+    });
+    if(particles.length > 0) requestAnimationFrame(animateConfetti);
+    else animating = false;
+  }
+
+  // ===== GUILT BAR =====
+  function animateGuiltBar(){
+    const bar = document.getElementById('guiltBar');
+    const pct = document.getElementById('guiltPercent');
+    let val = 0;
+    const interval = setInterval(()=>{
+      val = Math.min(val+1, 100);
+      bar.style.width = val+'%';
+      pct.textContent = val+'%';
+      if(val>=100) clearInterval(interval);
+    }, 20);
+  }
+
+  // ===== SCROLL REVEAL =====
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        if(e.target.closest('#goof-section') && e.target.classList.contains('goof-card')){
+          setTimeout(animateGuiltBar, 400);
+        }
+      }
+    });
+  }, {threshold:0.15});
+  revealEls.forEach(el=>observer.observe(el));
+
+  // ===== CAKE CUTTING =====
+  let cakeCut = false;
+  function cutCake(){
+    if(cakeCut) return;
+    cakeCut = true;
+    const knife = document.getElementById('knife');
+    const msg = document.getElementById('cakeMsg');
+    const hint = document.getElementById('tapHint');
+    knife.classList.add('cutting');
+    hint.style.display = 'none';
+    setTimeout(()=>{ msg.classList.add('revealed'); }, 600);
+    // Mini confetti
+    particles = [];
+    for(let i=0; i<50; i++){
+      const cx = canvas.width/2;
+      const cy = canvas.height*0.55;
+      particles.push({
+        x: cx+(Math.random()-0.5)*100,
+        y: cy,
+        vx: (Math.random()-0.5)*8,
+        vy: -Math.random()*6-2,
+        size: 14,
+        shape: ['🎂','✨','💕','🌸'][Math.floor(Math.random()*4)],
+        rotation: 0, rotSpeed: (Math.random()-0.5)*8,
+        life: 1, decay: 0.02, heartPhase: false
+      });
+    }
+    if(!animating){animating=true;animateConfetti();}
+  }
+
+  // ===== NO BUTTON RUN AWAY =====
+  const noBtn = document.getElementById('noBtn');
+  const btnGroup = document.getElementById('btnGroup');
+  let noPos = {x: null, y: null};
+
+  function runAway(e){
+    const rect = btnGroup.getBoundingClientRect();
+    const bRect = noBtn.getBoundingClientRect();
+    const cx = bRect.left + bRect.width/2 - rect.left;
+    const cy = bRect.top + bRect.height/2 - rect.top;
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const dx = cx - mx;
+    const dy = cy - my;
+    const dist = Math.sqrt(dx*dx+dy*dy)||1;
+    const speed = 120;
+    let newX = cx + (dx/dist)*speed - bRect.width/2;
+    let newY = cy + (dy/dist)*speed - bRect.height/2;
+    newX = Math.max(-20, Math.min(rect.width - bRect.width + 20, newX));
+    newY = Math.max(-40, Math.min(80, newY));
+    noBtn.style.left = newX + 'px';
+    noBtn.style.top = newY + 'px';
+    noBtn.style.position = 'absolute';
+  }
+
+  // ===== YES BUTTON =====
+  function onYes(){
+    document.getElementById('finalMsg').classList.add('show');
+    document.getElementById('noBtn').style.display = 'none';
+    startFloatingHearts();
+    triggerConfetti();
+    setTimeout(()=>{
+      document.getElementById('finalMsg').scrollIntoView({behavior:'smooth'});
+    }, 300);
+  }
+
+  function startFloatingHearts(){
+    const overlay = document.getElementById('heartsOverlay');
+    overlay.classList.add('active');
+    const hearts = ['💕','🌸','✨','💖','🎀','💗'];
+    function spawnHeart(){
+      if(!overlay.classList.contains('active')) return;
+      const h = document.createElement('div');
+      h.className = 'fh';
+      h.textContent = hearts[Math.floor(Math.random()*hearts.length)];
+      h.style.left = Math.random()*100 + '%';
+      h.style.animationDuration = (2+Math.random()*2)+'s';
+      h.style.animationDelay = Math.random()*0.5+'s';
+      h.style.fontSize = (1.5+Math.random()*2)+'rem';
+      overlay.appendChild(h);
+      setTimeout(()=>h.remove(), 4000);
+    }
+    const heartInterval = setInterval(spawnHeart, 150);
+    setTimeout(()=>{
+      clearInterval(heartInterval);
+      overlay.classList.remove('active');
+    }, 8000);
+  }
+
+  // Auto-observe guilt bar if already in view
+  window.addEventListener('load', ()=>{
+    const guiltCard = document.querySelector('.goof-card');
+    if(guiltCard){
+      const rect = guiltCard.getBoundingClientRect();
+      if(rect.top < window.innerHeight) { animateGuiltBar(); }
+    }
+  });
+</script>
+</body>
+</html>
