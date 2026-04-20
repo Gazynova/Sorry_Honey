@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I'm Sorry 💛</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+Devanagari:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --crimson: #8B1A1A;
+  --crimson-deep: #5C0E0E;
+  --gold: #C9960C;
+  --gold-light: #F0C040;
+  --gold-pale: #F5E0A0;
+  --ivory: #FDF6E3;
+  --ivory-dark: #F0E6C8;
+  --maroon: #6B0F1A;
+  --saffron: #E8700A;
+  --saffron-light: #F5A623;
+  --cream: #FFF8E7;
+  --text-dark: #2C1810;
+  --text-gold: #8B6914;
+  --text-mid: #6B4C3B;
+  --bg-dark: #1A0A05;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Cormorant Garamond', serif;
+  background: var(--bg-dark);
+  color: var(--ivory);
+  overflow-x: hidden;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath d='M12 2L9.5 8.5L3 9.27l5 4.87L6.82 21 12 17.77 17.18 21 16 14.14l5-4.87-6.5-.77z' fill='%23C9960C'/%3E%3C/svg%3E") 12 12, auto;
+}
+
+/* ===== ORNAMENTAL PATTERNS ===== */
+.mandala-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.04;
+  background-image: 
+    radial-gradient(circle at 20% 20%, var(--gold) 1px, transparent 1px),
+    radial-gradient(circle at 80% 80%, var(--gold) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, var(--saffron) 0.5px, transparent 0.5px);
+  background-size: 40px 40px, 40px 40px, 20px 20px;
+}
+
+/* ===== FLOATING PETALS ===== */
+#petals-canvas { position:fixed; inset:0; pointer-events:none; z-index:999; }
+.hearts-overlay { position:fixed; inset:0; pointer-events:none; z-index:998; display:none; }
+.hearts-overlay.active { display:block; }
+.fh { position:absolute; animation: petalFall 4s ease-in forwards; opacity:0; }
+@keyframes petalFall {
+  0% { transform: translateY(-10vh) rotate(0deg) scale(0.5); opacity:1; }
+  100% { transform: translateY(110vh) rotate(720deg) scale(1); opacity:0; }
+}
+
+/* ===== HERO ===== */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 3rem 1.5rem;
+  position: relative;
+  background: 
+    radial-gradient(ellipse at 50% 0%, rgba(201,150,12,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 100%, rgba(139,26,26,0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(139,26,26,0.3) 0%, transparent 50%),
+    linear-gradient(180deg, #120605 0%, #1E0A08 50%, #120605 100%);
+  overflow: hidden;
+}
+
+/* Ornamental top border */
+.hero-border-top {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--saffron), var(--gold), transparent);
+}
+.hero-border-bottom {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--saffron), var(--gold), transparent);
+}
+
+/* DIYA illustration */
+.diya-wrap {
+  position: relative; margin-bottom: 2rem;
+  animation: diyaFloat 3s ease-in-out infinite;
+}
+@keyframes diyaFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+.flame-anim {
+  animation: flameFlicker 0.8s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+}
+@keyframes flameFlicker {
+  0% { transform: scaleX(1) scaleY(1) rotate(-3deg); }
+  100% { transform: scaleX(0.85) scaleY(1.1) rotate(3deg); }
+}
+
+.hero-eyebrow {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  opacity: 0.85;
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.8rem, 9vw, 5.5rem);
+  font-weight: 900;
+  color: var(--gold-light);
+  line-height: 1.05;
+  text-shadow: 0 0 40px rgba(201,150,12,0.4), 2px 2px 0px rgba(92,14,14,0.6);
+  animation: titleGlow 4s ease-in-out infinite alternate;
+  margin-bottom: 0.3rem;
+}
+@keyframes titleGlow {
+  0% { text-shadow: 0 0 20px rgba(201,150,12,0.3), 2px 2px 0 rgba(92,14,14,0.6); }
+  100% { text-shadow: 0 0 60px rgba(201,150,12,0.6), 0 0 100px rgba(232,112,10,0.2), 2px 2px 0 rgba(92,14,14,0.6); }
+}
+
+.hero-title-hindi {
+  font-family: 'Noto Serif Devanagari', serif;
+  font-size: clamp(1rem, 3vw, 1.6rem);
+  color: var(--saffron-light);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  opacity: 0.9;
+}
+
+.gold-divider {
+  width: 200px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--saffron), var(--gold), transparent);
+  margin: 1.2rem auto;
+}
+.gold-divider-sm {
+  width: 80px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0.8rem auto;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: var(--gold-pale);
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+  max-width: 500px;
+}
+
+.royal-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--saffron) 50%, var(--gold) 100%);
+  color: var(--bg-dark);
+  border: none;
+  padding: 1rem 3rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  clip-path: polygon(12px 0%, calc(100% - 12px) 0%, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0% 50%);
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 30px rgba(201,150,12,0.3);
+}
+.royal-btn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 50px rgba(201,150,12,0.5);
+}
+.royal-btn:active { transform: scale(1.02); }
+
+.om-row {
+  margin-top: 2rem;
+  font-size: 1.8rem;
+  letter-spacing: 0.8rem;
+  color: var(--gold);
+  opacity: 0.5;
+  animation: omPulse 3s ease-in-out infinite;
+}
+@keyframes omPulse { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
+
+/* ===== SECTION COMMON ===== */
+.ksection {
+  position: relative; z-index: 1;
+  padding: 5rem 1.5rem;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.section-eyebrow {
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.5em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  color: var(--gold-light);
+  text-align: center;
+  line-height: 1.2;
+  font-weight: 700;
+  text-shadow: 0 0 20px rgba(201,150,12,0.2);
+}
+
+.section-title em {
+  font-style: italic;
+  color: var(--saffron-light);
+}
+
+/* ===== BAND DIVIDERS ===== */
+.band {
+  width: 100%; padding: 0.6rem 0;
+  background: linear-gradient(90deg, var(--crimson-deep), var(--maroon), var(--crimson-deep));
+  position: relative; overflow: hidden;
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.6em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+.band::before, .band::after {
+  content: '';
+  position: absolute; top: 0; bottom: 0; width: 6px;
+  background: linear-gradient(180deg, var(--gold), var(--saffron), var(--gold));
+}
+.band::before { left: 0; }
+.band::after { right: 0; }
+
+/* ===== GOOF / APOLOGY CARD ===== */
+.k3g-card {
+  background: linear-gradient(145deg, rgba(26,10,5,0.95), rgba(40,16,10,0.98));
+  border: 1px solid rgba(201,150,12,0.3);
+  border-radius: 4px;
+  padding: 2.5rem 2rem;
+  position: relative;
+  box-shadow: 0 0 60px rgba(201,150,12,0.05), inset 0 0 30px rgba(0,0,0,0.3);
+}
+
+/* Corner ornaments */
+.k3g-card::before, .k3g-card::after {
+  content: '✦';
+  position: absolute;
+  font-size: 1.2rem;
+  color: var(--gold);
+  opacity: 0.6;
+}
+.k3g-card::before { top: 12px; left: 16px; }
+.k3g-card::after { bottom: 12px; right: 16px; }
+
+.corner-tl, .corner-br {
+  position: absolute; width: 30px; height: 30px;
+  border-color: var(--gold); opacity: 0.4;
+}
+.corner-tl { top: 8px; right: 16px; border-top: 1.5px solid; border-right: 1.5px solid; }
+.corner-br { bottom: 8px; left: 16px; border-bottom: 1.5px solid; border-left: 1.5px solid; }
+
+.icon-row {
+  text-align: center; font-size: 3rem; margin-bottom: 1.2rem;
+  animation: iconBob 2s ease-in-out infinite;
+}
+@keyframes iconBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+.card-body {
+  font-size: 1.05rem;
+  color: var(--ivory-dark);
+  line-height: 1.9;
+  font-weight: 300;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.card-body strong { color: var(--gold-pale); font-weight: 600; }
+
+/* Guilt meter */
+.guilt-label {
+  display: flex; justify-content: space-between;
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--gold-pale);
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.05em;
+}
+
+.guilt-track {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,150,12,0.2);
+  border-radius: 2px;
+  height: 22px;
+  overflow: hidden;
+  position: relative;
+}
+.guilt-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--crimson), var(--saffron), var(--gold-light));
+  transition: width 2.5s cubic-bezier(0.34,1.2,0.64,1);
+  position: relative;
+}
+.guilt-fill::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  animation: gShimmer 1.8s ease-in-out infinite;
+}
+@keyframes gShimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+.guilt-fill-label {
+  position: absolute; right: 10px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem; font-weight: 600; color: white;
+  letter-spacing: 0.05em; font-family: 'Cormorant Garamond', serif;
+}
+#guiltPct { color: var(--gold-light); }
+
+/* ===== PHOTO GALLERY ===== */
+.gallery-intro {
+  text-align: center;
+  font-style: italic;
+  color: var(--gold-pale);
+  font-size: 1rem;
+  margin-bottom: 2.5rem;
+  opacity: 0.8;
+  font-weight: 300;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+}
+@media(min-width:600px){ .photo-grid { grid-template-columns: repeat(3,1fr); } }
+
+.photo-frame {
+  position: relative;
+  cursor: pointer;
+  transform: rotate(var(--rot,0deg));
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s;
+}
+.photo-frame:hover, .photo-frame.tapped {
+  transform: rotate(0deg) scale(1.07) !important;
+  z-index: 10;
+}
+.photo-frame:hover .photo-caption, .photo-frame.tapped .photo-caption {
+  opacity: 1; transform: translateY(0);
+}
+
+.frame-inner {
+  background: linear-gradient(145deg, rgba(201,150,12,0.15), rgba(139,26,26,0.1));
+  border: 1.5px solid rgba(201,150,12,0.4);
+  padding: 8px 8px 36px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5), inset 0 0 15px rgba(201,150,12,0.05);
+}
+
+.photo-slot {
+  aspect-ratio: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.photo-placeholder {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-size: 2.5rem; gap: 0.4rem;
+}
+.photo-placeholder span {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.65rem;
+  color: rgba(245,224,160,0.7);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.photo-caption {
+  position: absolute; bottom: 6px; left: 0; right: 0;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--gold-pale);
+  letter-spacing: 0.05em;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.3s, transform 0.3s;
+  padding: 0 6px;
+}
+
+/* ===== CAKE / CEREMONY ===== */
+#cake-section { text-align: center; }
+
+.cake-wrap {
+  display: inline-block; position: relative;
+  cursor: pointer; margin: 1rem auto;
+}
+.cake-wrap:hover .cake-main { transform: scale(1.04); }
+.cake-main { transition: transform 0.3s; }
+
+.knife-el {
+  position: absolute;
+  top: -40px; left: 50%;
+  transform: translateX(-50%) rotate(40deg);
+  font-size: 2.8rem;
+  pointer-events: none; opacity: 0;
+  transition: top 0.5s cubic-bezier(0.34,1.2,0.64,1), opacity 0.3s;
+  filter: drop-shadow(0 0 8px rgba(201,150,12,0.5));
+}
+.knife-el.down { top: 90px; opacity: 1; }
+
+.tap-hint-k {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--gold);
+  opacity: 0.7;
+  margin-top: 0.5rem;
+  animation: hintPulse 2s ease-in-out infinite;
+}
+@keyframes hintPulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+.reveal-msg {
+  background: linear-gradient(135deg, rgba(26,10,5,0.97), rgba(40,16,10,0.98));
+  border: 1.5px solid rgba(201,150,12,0.5);
+  border-radius: 4px;
+  padding: 2rem 2.5rem;
+  margin-top: 2rem;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  color: var(--gold-pale);
+  font-style: italic;
+  transform: scale(0) rotate(-8deg);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+  box-shadow: 0 0 40px rgba(201,150,12,0.1);
+}
+.reveal-msg::before {
+  content: '❝';
+  position: absolute; top: -15px; left: 20px;
+  font-size: 3rem; color: var(--gold); opacity: 0.4;
+  font-family: 'Playfair Display', serif;
+}
+.reveal-msg.show { transform: scale(1) rotate(0deg); opacity: 1; }
+.reveal-msg p { color: var(--ivory-dark); font-size: 0.95rem; font-style: normal; margin-top: 0.8rem; font-family:'Cormorant Garamond',serif; font-weight:300; }
+
+/* ===== FORGIVE ===== */
+#forgive-section { text-align: center; padding-bottom: 7rem; }
+
+.forgive-quote {
+  font-style: italic;
+  color: var(--gold-pale);
+  font-size: 1rem;
+  margin-bottom: 2.5rem;
+  opacity: 0.8;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+.btn-area {
+  display: flex; gap: 2rem; justify-content: center;
+  flex-wrap: wrap; position: relative;
+  min-height: 90px; align-items: center;
+}
+
+.haan-btn {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--saffron) 60%, var(--gold) 100%);
+  color: var(--bg-dark);
+  border: none;
+  padding: 1.1rem 3.5rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  clip-path: polygon(14px 0%, calc(100%-14px) 0%, 100% 50%, calc(100%-14px) 100%, 14px 100%, 0% 50%);
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 20px rgba(201,150,12,0.3);
+}
+.haan-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 50px rgba(201,150,12,0.5);
+}
+
+.nahi-btn {
+  background: transparent;
+  color: var(--gold-pale);
+  border: 1px solid rgba(201,150,12,0.3);
+  padding: 1.1rem 3.5rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  position: absolute;
+  white-space: nowrap;
+  transition: transform 0.15s;
+}
+
+.finale-card {
+  display: none;
+  background: linear-gradient(145deg, rgba(26,10,5,0.97), rgba(40,16,10,0.98));
+  border: 1.5px solid rgba(201,150,12,0.5);
+  border-radius: 4px;
+  padding: 2.5rem 2rem;
+  margin-top: 2.5rem;
+  animation: finaleIn 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+  box-shadow: 0 0 60px rgba(201,150,12,0.1);
+}
+.finale-card.show { display: block; }
+@keyframes finaleIn { 0%{transform:scale(0.5) translateY(30px);opacity:0} 100%{transform:scale(1) translateY(0);opacity:1} }
+
+.finale-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  color: var(--gold-light);
+  margin-bottom: 0.8rem;
+  text-shadow: 0 0 20px rgba(201,150,12,0.4);
+}
+.finale-card p {
+  color: var(--ivory-dark);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  font-weight: 300;
+}
+.finale-icons { font-size: 2rem; letter-spacing: 0.5rem; margin-top: 1.2rem; }
+
+/* ===== SCROLL REVEAL ===== */
+.reveal { opacity:0; transform: translateY(35px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.reveal.visible { opacity:1; transform: translateY(0); }
+
+/* ===== AMBIENT GLOW ===== */
+.glow-orb {
+  position: fixed; border-radius: 50%;
+  pointer-events: none; z-index: 0; filter: blur(80px);
+}
+.glow-orb-1 {
+  width: 400px; height: 400px;
+  background: rgba(139,26,26,0.12);
+  top: -100px; left: -100px;
+}
+.glow-orb-2 {
+  width: 300px; height: 300px;
+  background: rgba(201,150,12,0.08);
+  bottom: 100px; right: -50px;
+}
+
+/* Devanagari quote decorations */
+.deva-quote {
+  font-family: 'Noto Serif Devanagari', serif;
+  font-size: 1rem;
+  color: var(--gold);
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+  text-align: center;
+  margin: 0.5rem 0;
+}
+</style>
+</head>
+<body>
+
+<div class="mandala-bg"></div>
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<canvas id="petals-canvas"></canvas>
+<div class="hearts-overlay" id="heartsOverlay"></div>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div class="hero-border-top"></div>
+
+  <!-- DIYA SVG -->
+  <div class="diya-wrap">
+    <svg width="120" height="110" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg">
+      <!-- Flame glow -->
+      <ellipse cx="60" cy="28" rx="18" ry="22" fill="rgba(232,112,10,0.15)"/>
+      <!-- Flame outer -->
+      <g class="flame-anim">
+        <path d="M60 8 C52 18 48 26 52 34 C55 40 65 40 68 34 C72 26 68 18 60 8Z" fill="#E8700A"/>
+        <path d="M60 13 C55 20 53 27 56 33 C58 37 62 37 64 33 C67 27 65 20 60 13Z" fill="#F5A623"/>
+        <path d="M60 18 C57 23 56 28 58 32 C59 35 61 35 62 32 C64 28 63 23 60 18Z" fill="#FFF0A0"/>
+      </g>
+      <!-- Wick -->
+      <rect x="58" y="36" width="4" height="8" rx="2" fill="#8B6914"/>
+      <!-- Diya body -->
+      <path d="M30 55 Q30 70 40 74 Q50 78 60 78 Q70 78 80 74 Q90 70 90 55 Q90 48 60 46 Q30 48 30 55Z" fill="#C9960C"/>
+      <path d="M32 55 Q32 68 42 72 Q52 76 60 76 Q68 76 78 72 Q88 68 88 55 Q88 50 60 48 Q32 50 32 55Z" fill="#E8B830"/>
+      <ellipse cx="60" cy="55" rx="28" ry="9" fill="rgba(245,224,160,0.3)"/>
+      <!-- Handle -->
+      <path d="M88 58 Q100 55 105 60 Q110 65 105 70 Q100 75 90 70" stroke="#C9960C" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <!-- Oil -->
+      <ellipse cx="60" cy="54" rx="16" ry="5" fill="rgba(201,150,12,0.4)"/>
+      <!-- Decorations on diya -->
+      <circle cx="45" cy="62" r="3" fill="#E8700A"/>
+      <circle cx="60" cy="64" r="3" fill="#E8700A"/>
+      <circle cx="75" cy="62" r="3" fill="#E8700A"/>
+      <!-- Reflection -->
+      <ellipse cx="50" cy="52" rx="5" ry="2.5" fill="rgba(255,255,255,0.2)" transform="rotate(-15 50 52)"/>
+    </svg>
+  </div>
+
+  <p class="hero-eyebrow">Ek Sheher Ki Kahani</p>
+  <h1 class="hero-title">Kabhi Khushi<br><em style="font-size:0.75em;color:var(--saffron-light);">Kabhi Gham</em></h1>
+  <p class="hero-title-hindi">कभी खुशी कभी ग़म</p>
+
+  <div class="gold-divider"></div>
+
+  <p class="hero-subtitle">
+    "It's all about loving your family…"<br>
+    And today — it's all about loving <em>you</em>, and saying sorry.
+  </p>
+
+  <button class="royal-btn" onclick="beginCeremony()">
+    Shuru Karen — Begin ✦
+  </button>
+
+  <div class="om-row">✦ ॐ ✦ ॐ ✦</div>
+
+  <div class="hero-border-bottom"></div>
+</section>
+
+<!-- BAND -->
+<div class="band">✦ &nbsp; Ye Rishta Kya Kehlata Hai &nbsp; ✦</div>
+
+<!-- ===== GOOF / APOLOGY ===== -->
+<div class="ksection">
+  <p class="section-eyebrow reveal">Meri Galti</p>
+  <h2 class="section-title reveal">Main Ek Bewakoof Hoon <em>🙈</em></h2>
+  <div class="gold-divider-sm" style="margin-bottom:2.5rem;"></div>
+  <div class="reveal">
+    <div class="k3g-card">
+      <div class="corner-tl"></div>
+      <div class="corner-br"></div>
+      <div class="icon-row">🎂</div>
+      <p class="card-body">
+        Yash Raichand ke ghar mein, <strong>koi bhi moment miss nahi hota.</strong><br><br>
+        Lekin main — main ne kiya. Tera cake cutting miss kiya. Tera <strong>sabse khaas pal</strong>, aur main wahan nahi tha.<br><br>
+        Tu bilkul <strong>Pooja</strong> jaisi thi — beautiful, radiant, the light of every room. Aur main? Main woh anjaana tha jo door kisi corner mein baith kar regret kar raha tha.<br><br>
+        Paro ne Devdaas se kaha tha — <em>"Tumne mujhe pukaara nahi."</em><br>
+        Main keh raha hoon — <em>I was there in my heart. But my body was an absolute goof.</em>
+      </p>
+
+      <div class="guilt-label">
+        <span>Paschattaap Ka Meter</span>
+        <span id="guiltPct">0%</span>
+      </div>
+      <div class="guilt-track">
+        <div class="guilt-fill" id="guiltBar">
+          <span class="guilt-fill-label">Poori Tarah Guilty 😔</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- BAND -->
+<div class="band">✦ &nbsp; Teri Yaadein &nbsp; ✦</div>
+
+<!-- ===== GALLERY ===== -->
+<div class="ksection">
+  <p class="section-eyebrow reveal">Teri Tasveerein</p>
+  <h2 class="section-title reveal">Tu Thi Sabse <em>Khoobsurat</em> 👑</h2>
+  <div class="gold-divider-sm" style="margin-bottom:1rem;"></div>
+  <p class="gallery-intro reveal">"Har tasveer ek kahani kahe…" — Tap each frame 💛</p>
+
+  <div class="photo-grid">
+    <div class="photo-frame reveal" style="--rot:-2.5deg" onclick="this.classList.toggle('tapped')">
+      <div class="frame-inner">
+        <div class="photo-slot">
+          <img src="Images/Sorry1.jpeg" alt="Photo 1" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+        <div class="photo-caption">The Birthday Rani 👑</div>
+      </div>
+    </div>
+    <div class="photo-frame reveal" style="--rot:2deg" onclick="this.classList.toggle('tapped')">
+      <div class="frame-inner">
+        <div class="photo-slot">
+          <img src="Images/Sorry2.jpeg" alt="Photo 2" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+        <div class="photo-caption">Kash main wahan hota 🥺</div>
+      </div>
+    </div>
+    <div class="photo-frame reveal" style="--rot:-1deg" onclick="this.classList.toggle('tapped')">
+      <div class="frame-inner">
+        <div class="photo-slot">
+          <img src="Images/Sorry3.jpeg" alt="Photo 3" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+        <div class="photo-caption">Sone se bhi meethi ✨</div>
+      </div>
+    </div>
+    <div class="photo-frame reveal" style="--rot:3deg" onclick="this.classList.toggle('tapped')">
+      <div class="frame-inner">
+        <div class="photo-slot">
+          <img src="Images/Sorry4.jpeg" alt="Photo 4" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+        <div class="photo-caption">Meri Paro 🌹</div>
+      </div>
+    </div>
+    <div class="photo-frame reveal" style="--rot:-2deg" onclick="this.classList.toggle('tapped')">
+      <div class="frame-inner">
+        <div class="photo-slot">
+          <img src="Images/Sorry5.jpeg" alt="Photo 5" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+        <div class="photo-caption">Dil ki roshni 🪔</div>
+      </div>
+    </div>
+    <div class="photo-frame reveal" style="--rot:1.5deg" onclick="this.classList.toggle('tapped')">
+      <div class="frame-inner">
+        <div class="photo-slot">
+          <img src="Images/Sorry6.jpeg" alt="Photo 6" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+        <div class="photo-caption">Jashan-e-Zindagi 🎊</div>
+      </div>
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:1.5rem;color:rgba(201,150,12,0.5);font-size:0.8rem;font-style:italic;font-family:'Cormorant Garamond',serif;">
+    Apni asli tasveerein yahan lagayen — Replace placeholders with &lt;img&gt; tags 📷
+  </p>
+</div>
+
+<!-- BAND -->
+<div class="band">✦ &nbsp; Yeh Dil Maange More &nbsp; ✦</div>
+
+<!-- ===== CAKE CUTTING ===== -->
+<div class="ksection" id="cake-section">
+  <p class="section-eyebrow reveal">Virtual Ceremony</p>
+  <h2 class="section-title reveal">Tera <em>Virtual</em> Cake Cutting 🎂</h2>
+  <div class="gold-divider-sm" style="margin-bottom:0.5rem;"></div>
+  <p class="deva-quote reveal">जो छूट गया, वो इस पल में मिल जाए</p>
+  <br>
+
+  <div style="display:flex;flex-direction:column;align-items:center;">
+    <div class="cake-wrap reveal" id="cakeWrap" onclick="cutTheCake()">
+      <!-- Royal K3G Cake SVG -->
+      <svg class="cake-main" width="240" height="210" viewBox="0 0 240 210" xmlns="http://www.w3.org/2000/svg">
+        <!-- Platter -->
+        <ellipse cx="120" cy="196" rx="100" ry="13" fill="#3A1800"/>
+        <ellipse cx="120" cy="194" rx="98" ry="11" fill="#5C2A00"/>
+        <!-- Base tier -->
+        <rect x="20" y="148" width="200" height="48" rx="6" fill="#8B1A1A"/>
+        <ellipse cx="120" cy="148" rx="100" ry="14" fill="#A02020"/>
+        <!-- Base gold trim -->
+        <rect x="20" y="178" width="200" height="6" rx="2" fill="rgba(201,150,12,0.5)"/>
+        <rect x="20" y="148" width="200" height="6" rx="2" fill="rgba(201,150,12,0.3)"/>
+        <!-- Base decorations -->
+        <text x="50" y="170" font-size="16" fill="#C9960C" opacity="0.7">✦</text>
+        <text x="108" y="170" font-size="16" fill="#C9960C" opacity="0.7">✦</text>
+        <text x="166" y="170" font-size="16" fill="#C9960C" opacity="0.7">✦</text>
+        <!-- Frosting drips base -->
+        <path d="M20 156 Q33 144 46 156 Q59 144 72 156 Q85 144 98 156 Q111 144 124 156 Q137 144 150 156 Q163 144 176 156 Q189 144 202 156 Q215 144 220 156" fill="#FFF8E7" stroke="#FFF8E7" stroke-width="10" stroke-linecap="round" opacity="0.9"/>
+        <!-- Mid tier -->
+        <rect x="45" y="96" width="150" height="56" rx="6" fill="#6B0F1A"/>
+        <ellipse cx="120" cy="96" rx="75" ry="12" fill="#8B1A1A"/>
+        <!-- Mid gold -->
+        <rect x="45" y="128" width="150" height="5" rx="2" fill="rgba(201,150,12,0.5)"/>
+        <text x="75" y="122" font-size="13" fill="#C9960C" opacity="0.6">♦</text>
+        <text x="113" y="122" font-size="13" fill="#C9960C" opacity="0.6">♦</text>
+        <text x="151" y="122" font-size="13" fill="#C9960C" opacity="0.6">♦</text>
+        <!-- Frosting drips mid -->
+        <path d="M45 104 Q60 92 75 104 Q90 92 105 104 Q120 92 135 104 Q150 92 165 104 Q180 92 195 104" fill="#FFF8E7" stroke="#FFF8E7" stroke-width="9" stroke-linecap="round" opacity="0.9"/>
+        <!-- Top tier -->
+        <rect x="72" y="48" width="96" height="52" rx="6" fill="#8B1A1A"/>
+        <ellipse cx="120" cy="48" rx="48" ry="10" fill="#A02020"/>
+        <rect x="72" y="82" width="96" height="5" rx="2" fill="rgba(201,150,12,0.5)"/>
+        <!-- Frosting drips top -->
+        <path d="M72 56 Q84 44 96 56 Q108 44 120 56 Q132 44 144 56 Q156 44 168 56" fill="#FFF8E7" stroke="#FFF8E7" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+        <!-- Candles -->
+        <rect x="98" y="28" width="9" height="20" rx="4.5" fill="#C9960C"/>
+        <rect x="116" y="22" width="9" height="26" rx="4.5" fill="#8B1A1A"/>
+        <rect x="134" y="28" width="9" height="20" rx="4.5" fill="#E8700A"/>
+        <!-- Flames -->
+        <path d="M102.5 10 C98 17 96 23 99 28 C101 32 106 32 108 28 C111 23 109 17 102.5 10Z" fill="#E8700A"/>
+        <path d="M102.5 14 C100 19 99 24 101 28 C102 31 104 31 105 28 C107 24 106 19 102.5 14Z" fill="#FFC107"/>
+        <path d="M120.5 6 C116 13 114 20 117 25 C119 30 123 30 125 25 C128 20 126 13 120.5 6Z" fill="#E8700A"/>
+        <path d="M120.5 10 C118 16 117 21 119 25 C120 28 122 28 123 25 C125 21 124 16 120.5 10Z" fill="#FFC107"/>
+        <path d="M138.5 10 C134 17 132 23 135 28 C137 32 142 32 144 28 C147 23 145 17 138.5 10Z" fill="#E8700A"/>
+        <path d="M138.5 14 C136 19 135 24 137 28 C138 31 140 31 141 28 C143 24 142 19 138.5 14Z" fill="#FFC107"/>
+        <!-- Om symbol on cake -->
+        <text x="108" y="76" font-family="serif" font-size="18" fill="rgba(201,150,12,0.6)">ॐ</text>
+      </svg>
+      <div class="knife-el" id="knifeEl">🔪</div>
+    </div>
+
+    <p class="tap-hint-k" id="tapHintK">✦ Cake par tap karo — Cut karo! ✦</p>
+
+    <div class="reveal-msg" id="revealMsg">
+      "Main tumhara hoon tum meri ho — ab 100 real cakes aur 1,000 gale lagna baaki hai!"
+      <p>Har baar jab main kuch miss karta hoon — I owe you double. Consider this a promise. 💛</p>
+    </div>
+  </div>
+</div>
+
+<!-- BAND -->
+<div class="band">✦ &nbsp; Dil Toh Pagal Hai &nbsp; ✦</div>
+
+<!-- ===== FORGIVE ME ===== -->
+<div class="ksection" id="forgive-section">
+  <p class="section-eyebrow reveal">Mafi Maango</p>
+  <h2 class="section-title reveal">Kya Tum <em>Maafi</em> Dogi? 🥺</h2>
+  <div class="gold-divider-sm" style="margin-bottom:1.2rem;"></div>
+  <p class="forgive-quote reveal">
+    "Kehte hain agar kisi cheez ko dil se chaaho…<br>
+    toh poori kaayenaat use tumse milane ki koshish mein lag jaati hai."<br>
+    <span style="color:var(--gold);font-size:0.85rem;letter-spacing:0.1em;">— Shah Rukh Khan, probably, somewhere</span>
+  </p>
+
+  <div class="btn-area reveal" id="btnArea">
+    <button class="haan-btn" onclick="onHaan()">Haan, Maaf Kiya 💛</button>
+    <button class="nahi-btn" id="nahiBtn" onmousemove="nahiRun(event)" onclick="nahiRun(event)">
+      Nahi... Sochungi 😤
+    </button>
+  </div>
+
+  <div class="finale-card" id="finaleCard">
+    <h3>Shukriya, Jaanu! 🎊💛</h3>
+    <p>
+      Baaki maheene ka dinner mera zimmedaari hai! 🍽️<br><br>
+      WhatsApp check karo — details wahan hain. Main wada karta hoon aage se ek bhi pal nahi chhodunga. Tu mera sab kuch hai. 💛🪔✨
+    </p>
+    <div class="finale-icons">💛 🪔 ✦ 🎂 👑</div>
+  </div>
+</div>
+
+<script>
+// ===== PETAL / CONFETTI CANVAS =====
+const cvs = document.getElementById('petals-canvas');
+const ctx = cvs.getContext('2d');
+let parts = [], running = false;
+
+function sizeCvs(){ cvs.width=window.innerWidth; cvs.height=window.innerHeight; }
+sizeCvs(); window.addEventListener('resize', sizeCvs);
+
+function spawnParticles(cx, cy, count, type){
+  const symbols = type==='gold'
+    ? ['✦','✦','🌹','💛','🪔','✨','🎊','💫']
+    : ['💛','🌹','✦','🪔','💐','🎊','✨','💫'];
+  for(let i=0;i<count;i++){
+    parts.push({
+      x: cx || Math.random()*cvs.width,
+      y: cy || -20,
+      vx: (Math.random()-0.5)*7,
+      vy: Math.random()*4+1.5,
+      size: 14+Math.random()*14,
+      sym: symbols[Math.floor(Math.random()*symbols.length)],
+      rot: Math.random()*360,
+      rs: (Math.random()-0.5)*6,
+      life: 1, decay: 0.007+Math.random()*0.006
+    });
+  }
+  if(!running){ running=true; loop(); }
+}
+
+function loop(){
+  ctx.clearRect(0,0,cvs.width,cvs.height);
+  parts = parts.filter(p=>p.life>0);
+  parts.forEach(p=>{
+    ctx.save();
+    ctx.globalAlpha = p.life;
+    ctx.font = `${p.size}px serif`;
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot*Math.PI/180);
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(p.sym,0,0);
+    ctx.restore();
+    p.x+=p.vx; p.y+=p.vy; p.vy+=0.08;
+    p.rot+=p.rs; p.life-=p.decay;
+  });
+  if(parts.length>0) requestAnimationFrame(loop);
+  else running=false;
+}
+
+// ===== BEGIN CEREMONY =====
+function beginCeremony(){
+  spawnParticles(null,null,80,'gold');
+  setTimeout(()=>document.getElementById('goof-section')||
+    document.querySelector('.ksection').scrollIntoView({behavior:'smooth'}), 200);
+  setTimeout(animateGuilt, 1800);
+  setTimeout(()=>document.querySelectorAll('.ksection')[0].scrollIntoView({behavior:'smooth'}),1200);
+}
+
+// ===== GUILT BAR =====
+function animateGuilt(){
+  const bar=document.getElementById('guiltBar'), pct=document.getElementById('guiltPct');
+  let v=0;
+  const iv=setInterval(()=>{
+    v=Math.min(v+1,100);
+    bar.style.width=v+'%';
+    pct.textContent=v+'%';
+    if(v>=100) clearInterval(iv);
+  },22);
+}
+
+// ===== SCROLL REVEAL =====
+const revEls=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      if(e.target.matches('.k3g-card')) setTimeout(animateGuilt,400);
+    }
+  });
+},{threshold:0.12});
+revEls.forEach(el=>obs.observe(el));
+
+// ===== CAKE CUT =====
+let cut=false;
+function cutTheCake(){
+  if(cut) return; cut=true;
+  const knife=document.getElementById('knifeEl');
+  const msg=document.getElementById('revealMsg');
+  const hint=document.getElementById('tapHintK');
+  knife.classList.add('down');
+  hint.style.opacity='0';
+  setTimeout(()=>{ msg.classList.add('show'); },700);
+  const r=document.getElementById('cakeWrap').getBoundingClientRect();
+  spawnParticles(r.left+r.width/2, r.top+r.height/2, 50,'gold');
+}
+
+// ===== NAHI BUTTON RUNS AWAY =====
+const nahiBtn=document.getElementById('nahiBtn');
+const btnArea=document.getElementById('btnArea');
+function nahiRun(e){
+  const ar=btnArea.getBoundingClientRect();
+  const br=nahiBtn.getBoundingClientRect();
+  const cx=br.left+br.width/2-ar.left;
+  const cy=br.top+br.height/2-ar.top;
+  const mx=e.clientX-ar.left;
+  const my=e.clientY-ar.top;
+  const dx=cx-mx, dy=cy-my;
+  const dist=Math.sqrt(dx*dx+dy*dy)||1;
+  const spd=130;
+  let nx=cx+(dx/dist)*spd-br.width/2;
+  let ny=cy+(dy/dist)*spd-br.height/2;
+  nx=Math.max(-30,Math.min(ar.width-br.width+30,nx));
+  ny=Math.max(-50,Math.min(100,ny));
+  nahiBtn.style.cssText=`position:absolute;left:${nx}px;top:${ny}px;`;
+}
+
+// ===== HAAN! =====
+function onHaan(){
+  document.getElementById('nahiBtn').style.display='none';
+  document.getElementById('finaleCard').classList.add('show');
+  spawnParticles(null,null,150,'gold');
+  startPetalRain();
+  setTimeout(()=>document.getElementById('finaleCard').scrollIntoView({behavior:'smooth'}),400);
+}
+
+function startPetalRain(){
+  const ov=document.getElementById('heartsOverlay');
+  ov.classList.add('active');
+  const petals=['💛','🌹','🪔','✨','✦','💐'];
+  function spawn(){
+    if(!ov.classList.contains('active'))return;
+    const h=document.createElement('div');
+    h.className='fh';
+    h.textContent=petals[Math.floor(Math.random()*petals.length)];
+    h.style.cssText=`left:${Math.random()*100}%;animation-duration:${3+Math.random()*2}s;animation-delay:${Math.random()*0.5}s;font-size:${1.5+Math.random()*1.5}rem;`;
+    ov.appendChild(h);
+    setTimeout(()=>h.remove(),5000);
+  }
+  const iv=setInterval(spawn,130);
+  setTimeout(()=>{ clearInterval(iv); ov.classList.remove('active'); },9000);
+}
+</script>
+</body>
+</html>
