@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spider-Man: Brand New Day — A Love Story</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Special+Elite&family=Oswald:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --red:#E8192C;--dark-red:#7a0000;--blue:#0A1628;
+  --gold:#FFD700;--pink:#ff6b9d;--white:#fff8f2;
+}
+html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
+body{
+  background:#000;
+  font-family:'Oswald',sans-serif;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* ── CURSOR ── */
+#cur{position:fixed;pointer-events:none;z-index:9999;transition:transform .1s}
+#cur svg{display:block}
+#cur2{
+  position:fixed;width:6px;height:6px;
+  background:var(--red);border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transition:left .12s ease,top .12s ease;
+  transform:translate(-50%,-50%);
+}
+
+/* ── LIVING WEB CANVAS ── */
+#webCanvas{position:fixed;inset:0;z-index:0;opacity:.15;pointer-events:none}
+
+/* ── WEB SHOOT STREAK ── */
+.streak{
+  position:fixed;pointer-events:none;z-index:600;
+  height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);
+  transform-origin:left center;
+  animation:streakFade .7s ease forwards;
+}
+@keyframes streakFade{0%{opacity:1;scaleX:0}60%{opacity:.8}100%{opacity:0}}
+
+/* ═══════════════════════════════════════
+   SCENE 0 — BOOT SCREEN
+═══════════════════════════════════════ */
+#boot{
+  position:fixed;inset:0;z-index:2000;
+  background:#000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity 1.2s ease;
+}
+#boot.out{opacity:0;pointer-events:none}
+.boot-logo{
+  width:120px;height:120px;
+  filter:drop-shadow(0 0 30px #E8192C);
+  animation:bootPulse 1s ease-in-out infinite alternate;
+}
+@keyframes bootPulse{
+  from{filter:drop-shadow(0 0 15px #E8192C)}
+  to{filter:drop-shadow(0 0 50px #E8192C) drop-shadow(0 0 80px #ff3c3c)}
+}
+.boot-label{
+  font-family:'Bangers',cursive;font-size:13px;letter-spacing:10px;
+  color:var(--red);margin-top:24px;
+  animation:blink 1s step-end infinite;
+}
+@keyframes blink{50%{opacity:0}}
+.boot-track{
+  width:180px;height:2px;background:rgba(255,255,255,.1);
+  margin-top:28px;border-radius:2px;overflow:hidden;
+}
+.boot-fill{
+  height:100%;background:var(--red);width:0;
+  animation:bootLoad 2.8s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes bootLoad{to{width:100%}}
+
+/* ═══════════════════════════════════════
+   SCENES WRAPPER
+═══════════════════════════════════════ */
+.scene{
+  position:relative;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  scroll-snap-align:start;overflow:hidden;
+  padding:40px 20px;
+}
+
+/* ── CHAPTER DOTS ── */
+#chapNav{
+  position:fixed;right:20px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:12px;z-index:500;
+}
+.cdot{
+  width:8px;height:8px;border-radius:50%;
+  background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.2);
+  cursor:pointer;transition:all .3s;
+}
+.cdot.on{background:var(--red);box-shadow:0 0 10px var(--red);transform:scale(1.5)}
+
+/* ── SCROLL REVEALS ── */
+.show{opacity:0;transform:translateY(40px);transition:opacity .9s ease,transform .9s ease}
+.show.in{opacity:1;transform:none}
+.show-left{opacity:0;transform:translateX(-50px);transition:all .8s ease}
+.show-left.in{opacity:1;transform:none}
+.show-right{opacity:0;transform:translateX(50px);transition:all .8s ease}
+.show-right.in{opacity:1;transform:none}
+
+/* ═══════════════════════════════════════
+   SCENE 1 — CINEMATIC TITLE
+═══════════════════════════════════════ */
+#s1{
+  background:radial-gradient(ellipse at 50% 60%,#1a0005 0%,#000 80%);
+  justify-content:flex-end;padding-bottom:80px;
+}
+.title-bg-web{
+  position:absolute;inset:0;opacity:.07;
+  background-image:
+    repeating-linear-gradient(0deg,transparent 0,transparent 49px,rgba(255,255,255,1) 50px),
+    repeating-linear-gradient(90deg,transparent 0,transparent 49px,rgba(255,255,255,1) 50px),
+    repeating-linear-gradient(45deg,transparent 0,transparent 70px,rgba(255,255,255,.4) 71px),
+    repeating-linear-gradient(-45deg,transparent 0,transparent 70px,rgba(255,255,255,.4) 71px);
+  background-size:50px 50px,50px 50px,71px 71px,71px 71px;
+}
+/* Animated GIF Spidey — swinging from top */
+.hero-gif{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:min(340px,80vw);
+  animation:gifSwing 4s ease-in-out infinite alternate;
+  filter:drop-shadow(0 0 20px rgba(232,25,44,.5));
+  z-index:2;
+}
+@keyframes gifSwing{
+  from{transform:translateX(-60%) rotate(-4deg)}
+  to{transform:translateX(-40%) rotate(4deg)}
+}
+.title-stamp{
+  font-family:'Bangers',cursive;font-size:clamp(11px,2vw,14px);
+  color:var(--red);letter-spacing:10px;text-align:center;margin-bottom:10px;
+  opacity:0;animation:riseIn 1s ease 3.5s forwards;
+}
+.title-main{
+  font-family:'Bangers',cursive;
+  font-size:clamp(56px,14vw,130px);
+  color:#fff;text-align:center;line-height:.9;letter-spacing:4px;
+  text-shadow:0 0 60px rgba(232,25,44,.8),6px 6px 0 var(--dark-red);
+  opacity:0;animation:riseIn 1.2s ease 3.8s forwards;
+  position:relative;z-index:2;
+}
+.title-sub{
+  font-family:'Bangers',cursive;
+  font-size:clamp(20px,5vw,50px);
+  color:var(--gold);letter-spacing:6px;text-align:center;
+  text-shadow:0 0 20px rgba(255,215,0,.5);
+  opacity:0;animation:riseIn 1s ease 4.3s forwards;
+  position:relative;z-index:2;
+}
+.title-love{
+  font-family:'Special Elite',serif;
+  font-size:clamp(13px,2.5vw,18px);color:var(--pink);
+  letter-spacing:4px;text-align:center;margin-top:12px;
+  opacity:0;animation:riseIn 1s ease 5s forwards;
+  position:relative;z-index:2;
+}
+.scroll-cue{
+  position:absolute;bottom:28px;
+  color:rgba(255,255,255,.35);font-size:12px;letter-spacing:5px;
+  animation:bounce2 2s ease-in-out 5.5s infinite;
+}
+@keyframes bounce2{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+@keyframes riseIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+
+/* ═══════════════════════════════════════
+   SCENE 2 — THREE.JS MULTIVERSE
+═══════════════════════════════════════ */
+#s2{background:#000;padding:0}
+#threeCanvas{
+  position:absolute;inset:0;width:100%;height:100%;
+}
+.s2-ui{
+  position:relative;z-index:10;text-align:center;
+  pointer-events:none;width:100%;padding:40px 20px;
+}
+.s2-title{
+  font-family:'Bangers',cursive;
+  font-size:clamp(28px,6vw,60px);color:#fff;
+  letter-spacing:4px;text-shadow:0 0 30px var(--red);
+  margin-bottom:8px;
+}
+.s2-sub{
+  font-family:'Special Elite',serif;
+  font-size:clamp(12px,2vw,16px);color:rgba(255,255,255,.4);
+  letter-spacing:3px;
+}
+.char-labels{
+  position:absolute;bottom:30px;left:0;right:0;
+  display:flex;justify-content:center;gap:clamp(12px,3vw,28px);
+  flex-wrap:wrap;padding:0 20px;z-index:10;pointer-events:none;
+}
+.clabel{
+  font-family:'Bangers',cursive;font-size:clamp(10px,2vw,14px);
+  letter-spacing:2px;padding:4px 12px;border-radius:20px;
+  border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.6);
+  background:rgba(0,0,0,.4);backdrop-filter:blur(4px);
+}
+
+/* ═══════════════════════════════════════
+   SCENE 3 — ANIMATED GIF PARADE
+═══════════════════════════════════════ */
+#s3{
+  background:linear-gradient(180deg,#000 0%,#0d000a 50%,#000 100%);
+  flex-direction:column;gap:0;padding:60px 0;
+}
+.s3-title{
+  font-family:'Bangers',cursive;
+  font-size:clamp(26px,5vw,52px);color:var(--red);
+  letter-spacing:4px;text-align:center;
+  text-shadow:0 0 20px rgba(232,25,44,.4);
+  margin-bottom:6px;
+}
+.s3-sub{
+  font-family:'Special Elite',serif;color:rgba(255,255,255,.4);
+  font-size:clamp(12px,2vw,15px);letter-spacing:3px;
+  text-align:center;margin-bottom:50px;
+}
+
+/* Horizontal scrolling GIF strip */
+.gif-strip-wrap{width:100%;overflow:hidden;position:relative;margin-bottom:16px}
+.gif-strip{
+  display:flex;align-items:flex-end;
+  animation:stripScroll 28s linear infinite;
+  width:max-content;
+}
+.gif-strip:hover{animation-play-state:paused}
+@keyframes stripScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.gif-strip.rev{animation-direction:reverse}
+
+.gif-item{
+  flex-shrink:0;
+  margin:0 20px;
+  text-align:center;
+  cursor:pointer;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.gif-item:hover{transform:scale(1.15) translateY(-10px)}
+.gif-item img{
+  height:clamp(80px,16vw,160px);
+  width:auto;
+  display:block;
+  filter:drop-shadow(0 0 12px rgba(232,25,44,.4));
+}
+.gif-item span{
+  display:block;margin-top:8px;
+  font-family:'Bangers',cursive;font-size:11px;letter-spacing:2px;
+  color:rgba(255,255,255,.35);
+}
+
+/* ═══════════════════════════════════════
+   SCENE 4 — LOVE STORY / COMIC PANELS
+═══════════════════════════════════════ */
+#s4{
+  background:
+    radial-gradient(ellipse at 20% 40%,rgba(232,25,44,.08) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 60%,rgba(255,107,157,.06) 0%,transparent 60%),
+    #000;
+  padding:80px 20px;
+  scroll-snap-align:start;
+}
+
+.comic-layout{
+  max-width:900px;width:100%;
+  display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto;
+  gap:16px;
+}
+.panel{
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;overflow:hidden;
+  position:relative;padding:28px 24px;
+  transition:border-color .3s,box-shadow .3s;
+}
+.panel:hover{
+  border-color:rgba(232,25,44,.4);
+  box-shadow:0 0 30px rgba(232,25,44,.1);
+}
+.panel.wide{grid-column:1/-1}
+.panel.tall{grid-row:span 2}
+
+.panel-num{
+  font-family:'Bangers',cursive;font-size:11px;letter-spacing:3px;
+  color:var(--red);margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.panel-num::before{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,var(--red),transparent);
+}
+.panel-headline{
+  font-family:'Bangers',cursive;
+  font-size:clamp(20px,3.5vw,34px);color:#fff;
+  letter-spacing:2px;margin-bottom:12px;line-height:1.1;
+}
+.panel-body{
+  font-family:'Special Elite',serif;
+  font-size:clamp(13px,1.8vw,16px);color:rgba(255,255,255,.7);
+  line-height:1.8;
+}
+.panel-body strong{color:var(--gold)}
+.panel-body em{color:var(--pink);font-style:normal}
+
+/* Spidey GIF inside panel */
+.panel-gif{
+  float:right;margin:0 0 8px 16px;
+  width:clamp(70px,14vw,130px);
+  filter:drop-shadow(0 0 8px rgba(232,25,44,.3));
+}
+
+/* Heart burst */
+.hearts{
+  position:absolute;top:12px;right:14px;
+  display:flex;gap:4px;
+}
+.heart{
+  font-size:14px;opacity:.4;
+  animation:heartbeat 1.5s ease-in-out infinite;
+}
+.heart:nth-child(2){animation-delay:.3s}
+.heart:nth-child(3){animation-delay:.6s}
+@keyframes heartbeat{0%,100%{transform:scale(1)}50%{transform:scale(1.3);opacity:.8}}
+
+/* ── SECTION HEADER ── */
+.s-header{
+  text-align:center;margin-bottom:48px;width:100%;
+}
+.s-header h2{
+  font-family:'Bangers',cursive;
+  font-size:clamp(28px,5.5vw,56px);
+  letter-spacing:4px;
+}
+.s-header p{
+  font-family:'Special Elite',serif;
+  font-size:clamp(12px,2vw,16px);
+  color:rgba(255,255,255,.4);letter-spacing:3px;margin-top:8px;
+}
+
+/* ═══════════════════════════════════════
+   SCENE 5 — ANIMATED GIF WALL (spiders)
+═══════════════════════════════════════ */
+#s5{
+  background:#000;padding:60px 20px;scroll-snap-align:start;
+}
+.gif-wall{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(clamp(120px,18vw,200px),1fr));
+  gap:16px;max-width:900px;width:100%;
+}
+.gif-card{
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;overflow:hidden;
+  padding:20px 16px;text-align:center;
+  cursor:pointer;position:relative;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  opacity:0;transform:translateY(30px);
+}
+.gif-card.in{opacity:1;transform:none;transition:opacity .6s ease,transform .6s ease}
+.gif-card:hover{
+  transform:translateY(-8px) scale(1.04);
+  border-color:var(--card-c,var(--red));
+  box-shadow:0 0 25px var(--card-g,rgba(232,25,44,.25));
+}
+.gif-card img{
+  width:100%;height:auto;max-height:140px;object-fit:contain;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.5));
+}
+.gif-card-name{
+  font-family:'Bangers',cursive;font-size:15px;letter-spacing:2px;
+  color:#fff;margin-top:12px;
+}
+.gif-card-sub{
+  font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.35);
+  font-family:'Oswald',sans-serif;font-weight:300;margin-top:3px;
+}
+.gif-card-badge{
+  display:inline-block;margin-top:8px;
+  font-size:9px;letter-spacing:2px;padding:3px 10px;
+  border-radius:20px;font-weight:600;
+  background:var(--card-bg,rgba(232,25,44,.12));
+  color:var(--card-c,var(--red));
+  border:1px solid var(--card-b,rgba(232,25,44,.25));
+}
+
+/* ═══════════════════════════════════════
+   SCENE 6 — THE INVITATION
+═══════════════════════════════════════ */
+#s6{
+  background:
+    radial-gradient(ellipse at center,rgba(232,25,44,.12) 0%,transparent 70%),#000;
+  padding:80px 20px;scroll-snap-align:start;
+}
+.inv-wrap{max-width:700px;width:100%;position:relative}
+
+/* web corner SVG */
+.wc{position:absolute;width:100px;height:100px;opacity:.35;pointer-events:none}
+.wc.tl{top:-8px;left:-8px}
+.wc.tr{top:-8px;right:-8px;transform:scaleX(-1)}
+.wc.bl{bottom:-8px;left:-8px;transform:scaleY(-1)}
+.wc.br{bottom:-8px;right:-8px;transform:scale(-1,-1)}
+
+.inv-box{
+  background:rgba(8,3,18,.95);
+  border:1px solid rgba(232,25,44,.25);
+  border-radius:20px;padding:50px 40px;
+  position:relative;
+  box-shadow:0 0 80px rgba(232,25,44,.06),inset 0 0 80px rgba(232,25,44,.02);
+  backdrop-filter:blur(20px);
+}
+/* Animated inner web bg */
+.inv-box::before{
+  content:'';position:absolute;inset:0;border-radius:20px;
+  background-image:
+    repeating-linear-gradient(45deg,transparent,transparent 50px,rgba(255,255,255,.012) 51px),
+    repeating-linear-gradient(-45deg,transparent,transparent 50px,rgba(255,255,255,.012) 51px);
+  pointer-events:none;
+}
+
+.inv-eye{
+  font-family:'Bangers',cursive;font-size:11px;letter-spacing:8px;
+  color:var(--red);text-align:center;margin-bottom:10px;
+}
+.inv-title{
+  font-family:'Bangers',cursive;
+  font-size:clamp(32px,6vw,58px);color:#fff;
+  text-align:center;letter-spacing:3px;line-height:1;
+  text-shadow:0 0 40px rgba(232,25,44,.4);margin-bottom:6px;
+}
+.inv-to{
+  font-family:'Special Elite',serif;
+  font-size:clamp(14px,2.5vw,20px);color:var(--gold);
+  text-align:center;letter-spacing:2px;margin-bottom:32px;
+}
+.inv-divider{
+  display:flex;align-items:center;gap:14px;margin:24px 0;
+}
+.inv-dl{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(232,25,44,.4),transparent)}
+.inv-di{font-size:16px}
+
+.inv-body{
+  font-family:'Special Elite',serif;
+  font-size:clamp(14px,2.2vw,17px);color:rgba(255,255,255,.8);
+  line-height:2;text-align:center;
+}
+.inv-body strong{color:var(--gold)}
+.inv-body em{color:var(--pink);font-style:normal}
+
+/* Spidey gif floating in invitation */
+.inv-gif-float{
+  display:block;margin:28px auto;
+  width:clamp(100px,22vw,180px);
+  filter:drop-shadow(0 0 20px rgba(232,25,44,.5));
+  animation:floatGif 3s ease-in-out infinite alternate;
+}
+@keyframes floatGif{
+  from{transform:translateY(0) rotate(-3deg)}
+  to{transform:translateY(-14px) rotate(3deg)}
+}
+
+/* TICKET */
+.ticket{
+  margin:32px 0;border-radius:14px;overflow:hidden;
+  background:linear-gradient(135deg,#1a0000,#000814,#0d001a);
+  border:1px solid rgba(232,25,44,.3);
+  position:relative;
+}
+.ticket::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(255,255,255,.013) 9px);
+  pointer-events:none;
+}
+.ticket-top{
+  padding:24px 28px;text-align:center;
+  border-bottom:2px dashed rgba(255,255,255,.08);
+}
+.t-movie{
+  font-family:'Bangers',cursive;
+  font-size:clamp(28px,5vw,48px);color:var(--red);
+  letter-spacing:3px;text-shadow:0 0 20px rgba(232,25,44,.5);
+}
+.t-sub{
+  font-family:'Bangers',cursive;
+  font-size:clamp(14px,3vw,26px);color:var(--gold);
+  letter-spacing:5px;margin-top:4px;
+}
+.ticket-bottom{
+  padding:20px 28px;
+  display:flex;justify-content:space-around;flex-wrap:wrap;gap:16px;
+}
+.t-field .t-label{
+  font-size:9px;letter-spacing:3px;color:rgba(255,255,255,.3);
+  font-weight:600;margin-bottom:4px;
+}
+.t-field .t-val{
+  font-family:'Bangers',cursive;font-size:clamp(16px,3vw,22px);
+  color:#fff;letter-spacing:2px;
+}
+
+/* PROMISES */
+.promises{list-style:none;margin:24px 0}
+.promise{
+  display:flex;gap:14px;align-items:flex-start;
+  padding:13px 0;border-bottom:1px solid rgba(255,255,255,.04);
+  opacity:0;transform:translateX(-20px);transition:all .5s ease;
+}
+.promise.in{opacity:1;transform:none}
+.p-icon{
+  flex-shrink:0;width:34px;height:34px;
+  background:rgba(232,25,44,.08);
+  border:1px solid rgba(232,25,44,.2);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:17px;
+}
+.p-text{
+  font-family:'Special Elite',serif;
+  font-size:clamp(12px,1.8vw,15px);color:rgba(255,255,255,.7);
+  line-height:1.7;padding-top:4px;
+}
+.p-text strong{color:var(--gold)}
+
+/* ═══════════════════════════════════════
+   SCENE 7 — THE QUESTION
+═══════════════════════════════════════ */
+#s7{
+  background:radial-gradient(ellipse at center,rgba(232,25,44,.18) 0%,#000 70%);
+  scroll-snap-align:start;
+}
+/* Giant background web */
+.bg-web{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  opacity:.07;pointer-events:none;
+}
+.q-gif{
+  width:clamp(100px,22vw,200px);
+  filter:drop-shadow(0 0 30px rgba(232,25,44,.7));
+  animation:qGifBounce 2s ease-in-out infinite alternate;
+  margin-bottom:24px;
+}
+@keyframes qGifBounce{
+  from{transform:translateY(0) scale(1)}
+  to{transform:translateY(-18px) scale(1.05)}
+}
+.q-text{
+  font-family:'Bangers',cursive;
+  font-size:clamp(42px,10vw,100px);
+  color:#fff;text-align:center;line-height:.95;letter-spacing:3px;
+  text-shadow:0 0 50px rgba(232,25,44,.7),5px 5px 0 var(--dark-red);
+  margin-bottom:12px;
+}
+.q-small{
+  font-family:'Special Elite',serif;
+  font-size:clamp(14px,2.5vw,20px);color:rgba(255,255,255,.4);
+  text-align:center;letter-spacing:3px;margin-bottom:56px;
+}
+/* Buttons */
+.btn-wrap{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+.btn{
+  font-family:'Bangers',cursive;font-size:clamp(20px,4vw,32px);
+  letter-spacing:3px;padding:16px 44px;border-radius:60px;border:none;
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:all .2s cubic-bezier(.34,1.56,.64,1);
+}
+.btn::after{
+  content:'';position:absolute;inset:0;
+  background:rgba(255,255,255,.15);
+  transform:translateX(-100%);transition:transform .4s ease;
+}
+.btn:hover::after{transform:translateX(0)}
+.btn-y{
+  background:linear-gradient(135deg,var(--red),var(--dark-red));
+  color:#fff;
+  box-shadow:0 8px 32px rgba(232,25,44,.4),0 0 0 2px rgba(232,25,44,.3);
+}
+.btn-y:hover{transform:translateY(-5px) scale(1.05);box-shadow:0 16px 48px rgba(232,25,44,.6)}
+.btn-n{
+  background:rgba(255,255,255,.05);
+  color:rgba(255,255,255,.4);
+  border:1px solid rgba(255,255,255,.1)!important;
+  transition:all .15s!important;
+}
+/* Responses */
+.resp{
+  display:none;max-width:580px;width:100%;text-align:center;
+  animation:popUp .6s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes popUp{
+  from{transform:scale(.6) translateY(30px);opacity:0}
+  to{transform:none;opacity:1}
+}
+.resp-title{
+  font-family:'Bangers',cursive;
+  font-size:clamp(34px,7vw,70px);color:var(--red);
+  letter-spacing:3px;text-shadow:0 0 30px rgba(232,25,44,.6);
+  margin-bottom:14px;
+}
+.resp-body{
+  font-family:'Special Elite',serif;
+  font-size:clamp(15px,2.5vw,19px);color:rgba(255,255,255,.8);line-height:1.9;
+}
+.resp-gif{
+  width:clamp(80px,18vw,150px);margin:16px auto;display:block;
+  filter:drop-shadow(0 0 16px rgba(232,25,44,.5));
+}
+
+/* ── CONFETTI CANVAS ── */
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:999;display:none}
+
+/* ── FOOTER ── */
+#foot{
+  background:#000;text-align:center;padding:40px 20px;
+  scroll-snap-align:start;
+}
+.foot-txt{
+  font-family:'Special Elite',serif;font-size:13px;letter-spacing:2px;
+  color:rgba(255,255,255,.25);
+}
+.foot-txt strong{color:var(--red);font-family:'Bangers',cursive;font-size:16px;letter-spacing:3px}
+
+@media(max-width:600px){
+  .comic-layout{grid-template-columns:1fr}
+  .panel.tall,.panel.wide{grid-column:auto;grid-row:auto}
+  .inv-box{padding:36px 20px}
+  .ticket-bottom{flex-direction:column;align-items:center;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cur"><svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="#E8192C" stroke-width="1.5"/><circle cx="12" cy="12" r="2.5" fill="#E8192C"/><line x1="12" y1="1" x2="12" y2="6" stroke="#E8192C" stroke-width="1.5"/><line x1="12" y1="18" x2="12" y2="23" stroke="#E8192C" stroke-width="1.5"/><line x1="1" y1="12" x2="6" y2="12" stroke="#E8192C" stroke-width="1.5"/><line x1="18" y1="12" x2="23" y2="12" stroke="#E8192C" stroke-width="1.5"/></svg></div>
+<div id="cur2"></div>
+
+<!-- WEB CANVAS -->
+<canvas id="webCanvas"></canvas>
+
+<!-- CONFETTI -->
+<canvas id="confetti"></canvas>
+
+<!-- CHAPTER DOTS -->
+<div id="chapNav">
+  <div class="cdot on" data-s="s1"></div>
+  <div class="cdot" data-s="s2"></div>
+  <div class="cdot" data-s="s3"></div>
+  <div class="cdot" data-s="s4"></div>
+  <div class="cdot" data-s="s5"></div>
+  <div class="cdot" data-s="s6"></div>
+  <div class="cdot" data-s="s7"></div>
+</div>
+
+<!-- ══════════ BOOT ══════════ -->
+<div id="boot">
+  <svg class="boot-logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+    <defs><radialGradient id="rg" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="#FF3C3C"/><stop offset="100%" stop-color="#8B0000"/></radialGradient></defs>
+    <circle cx="60" cy="60" r="57" fill="url(#rg)" stroke="#5a0000" stroke-width="2.5"/>
+    <path d="M3 60Q30 53 60 60Q90 67 117 60" stroke="#6a0000" stroke-width="1.5" fill="none"/>
+    <path d="M60 3Q53 30 60 60Q67 90 60 117" stroke="#6a0000" stroke-width="1.5" fill="none"/>
+    <path d="M14 14Q37 37 60 60Q83 83 106 106" stroke="#6a0000" stroke-width="1.2" fill="none"/>
+    <path d="M106 14Q83 37 60 60Q37 83 14 106" stroke="#6a0000" stroke-width="1.2" fill="none"/>
+    <path d="M3 35Q30 47 60 60Q90 73 117 85" stroke="#6a0000" stroke-width="0.8" fill="none"/>
+    <path d="M35 3Q47 30 60 60Q73 90 85 117" stroke="#6a0000" stroke-width="0.8" fill="none"/>
+    <ellipse cx="60" cy="62" rx="13" ry="20" fill="#0a0a0a"/>
+    <ellipse cx="60" cy="47" rx="11" ry="11" fill="#0a0a0a"/>
+    <ellipse cx="53" cy="45" rx="5" ry="4" fill="rgba(255,255,255,.9)"/>
+    <ellipse cx="67" cy="45" rx="5" ry="4" fill="rgba(255,255,255,.9)"/>
+    <path d="M47 55Q38 44 26 36" stroke="#0a0a0a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M47 62Q35 60 21 57" stroke="#0a0a0a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M47 70Q38 77 28 86" stroke="#0a0a0a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M73 55Q82 44 94 36" stroke="#0a0a0a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M73 62Q85 60 99 57" stroke="#0a0a0a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M73 70Q82 77 92 86" stroke="#0a0a0a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  </svg>
+  <div class="boot-label">LOADING MULTIVERSE...</div>
+  <div class="boot-track"><div class="boot-fill"></div></div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCENE 1 — TITLE
+══════════════════════════════════ -->
+<section class="scene" id="s1">
+  <div class="title-bg-web"></div>
+  <!-- Spidey swinging GIF from Marvel animated style -->
+  <img class="hero-gif"
+    src="https://media.tenor.com/NsJBaP2wn9AAAAAC/spiderman-swing.gif"
+    onerror="this.src='https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTlrdTZoa2pkNXhvb2dxbjBhMHk4dDg1d3ZjaHgwMmlnMzBlNmpucyZlcD12MV9pbnRlcm5hbGdfYnlfaWQmY3Q9Zw/3ohzdIuqJoo8QdKlnW/giphy.gif';this.onerror=null"
+    alt="Spider-Man swinging">
+
+  <div class="show" style="text-align:center;position:relative;z-index:2">
+    <div class="title-stamp">A PERSONAL INVITATION FROM YOUR FRIENDLY NEIGHBOURHOOD GEEK</div>
+    <div class="title-main">SPIDER<br>MAN</div>
+    <div class="title-sub">★ BRAND NEW DAY ★</div>
+    <div class="title-love">— a love story wrapped in a web —</div>
+  </div>
+  <div class="scroll-cue">SCROLL TO ENTER THE MULTIVERSE ↓</div>
+</section>
+
+<!-- ══════════════════════════════════
+     SCENE 2 — THREE.JS MULTIVERSE
+══════════════════════════════════ -->
+<section class="scene" id="s2" style="min-height:100vh">
+  <canvas id="threeCanvas"></canvas>
+  <div class="s2-ui">
+    <div class="s2-title show">THE SPIDER-VERSE</div>
+    <div class="s2-sub show" style="transition-delay:.2s">ALL UNIVERSES. ONE INVITATION.</div>
+  </div>
+  <div class="char-labels">
+    <span class="clabel" style="color:#ff9090;border-color:rgba(255,100,100,.3)">Tobey · Earth-96283</span>
+    <span class="clabel" style="color:#aaddff;border-color:rgba(100,180,255,.3)">Andrew · Earth-120703</span>
+    <span class="clabel" style="color:var(--red);border-color:rgba(232,25,44,.3)">Tom · Earth-616</span>
+    <span class="clabel" style="color:#cc88ff;border-color:rgba(160,80,255,.3)">Miles · Earth-1610</span>
+    <span class="clabel" style="color:#ffaadd;border-color:rgba(255,120,200,.3)">Gwen · Earth-65</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SCENE 3 — GIF PARADE
+══════════════════════════════════ -->
+<section class="scene" id="s3">
+  <div class="show" style="text-align:center;width:100%;margin-bottom:8px">
+    <div class="s3-title">THE HEROES IN ACTION</div>
+    <div class="s3-sub">EVERY SPIDER-MAN. EVERY MOMENT. ONE NIGHT.</div>
+  </div>
+
+  <!-- Strip 1: Classic animated GIFs -->
+  <div class="gif-strip-wrap">
+    <div class="gif-strip" id="strip1">
+      <!-- Will be populated by JS with img tags using known-good GIF sources -->
+    </div>
+  </div>
+
+  <!-- Strip 2: Reverse -->
+  <div class="gif-strip-wrap" style="margin-top:10px">
+    <div class="gif-strip rev" id="strip2"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SCENE 4 — LOVE STORY COMIC
+══════════════════════════════════ -->
+<section class="scene" id="s4">
+  <div class="show" style="text-align:center;margin-bottom:40px;width:100%">
+    <div style="font-family:'Bangers',cursive;font-size:clamp(28px,5.5vw,56px);color:var(--red);letter-spacing:4px">THE STORY SO FAR</div>
+    <div style="font-family:'Special Elite',serif;color:rgba(255,255,255,.4);font-size:clamp(12px,2vw,16px);letter-spacing:3px;margin-top:6px">A TALE OF LOVE, WEBS & MOVIE DATES</div>
+  </div>
+
+  <div class="comic-layout">
+
+    <div class="panel wide show">
+      <div class="panel-num">CHAPTER 01 — THE ORIGIN</div>
+      <img class="panel-gif"
+        src="https://media.tenor.com/5gQbX3VaBpMAAAAC/spider-man-pointing.gif"
+        onerror="this.style.display='none'"
+        alt="Spider-Man pointing">
+      <div class="panel-headline">THERE'S THIS PERSON<br>WHO MEANS EVERYTHING</div>
+      <div class="panel-body">
+        It started like all great stories — a geek, a movie, and one person who made the whole universe feel smaller. <strong>You don't have to know every Peter Parker.</strong> You just have to show up. That's all Spider-Man ever did too. ❤️
+      </div>
+      <div class="hearts"><span class="heart">❤️</span><span class="heart">🕷️</span><span class="heart">❤️</span></div>
+    </div>
+
+    <div class="panel show" style="transition-delay:.15s">
+      <div class="panel-num">CHAPTER 02 — THE MULTIVERSE</div>
+      <div class="panel-headline">THREE SPIDER-MEN.<br>ONE FAVOURITE.</div>
+      <div class="panel-body">
+        Tobey, Andrew, Tom — they've all swung through New York. But none of them get to sit next to <em>you</em> in a dark cinema. <strong>That privilege is mine.</strong> 🕷️
+      </div>
+    </div>
+
+    <div class="panel show" style="transition-delay:.25s">
+      <div class="panel-num">CHAPTER 03 — THE PROMISE</div>
+      <div class="panel-headline">I WILL EXPLAIN<br>EVERYTHING.</div>
+      <div class="panel-body">
+        Every villain. Every timeline. Every reference. Consider me your <strong>personal Ned Leeds</strong> — minus the betrayal. I'll whisper-explain the whole thing if needed. 🎬
+      </div>
+    </div>
+
+    <div class="panel wide show" style="transition-delay:.35s">
+      <div class="panel-num">CHAPTER 04 — THE INVITATION</div>
+      <div class="panel-headline">WITH GREAT POWER COMES<br>GREAT MOVIE DATES</div>
+      <div class="panel-body" style="text-align:center">
+        Spider-Man once said: <em>"Anyone can wear the mask."</em><br>
+        But only <strong>one person</strong> gets to share popcorn with me while I quietly lose my mind at the cinema.
+        <br><br>
+        That person is you. It has always been you. 🕷️❤️
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SCENE 5 — GIF CHARACTER WALL
+══════════════════════════════════ -->
+<section class="scene" id="s5">
+  <div class="show" style="text-align:center;margin-bottom:40px;width:100%">
+    <div style="font-family:'Bangers',cursive;font-size:clamp(26px,5vw,52px);color:var(--red);letter-spacing:4px">THE FULL ROSTER</div>
+    <div style="font-family:'Special Elite',serif;color:rgba(255,255,255,.4);font-size:clamp(12px,2vw,15px);letter-spacing:3px;margin-top:6px">HOVER EACH HERO TO ACTIVATE</div>
+  </div>
+
+  <div class="gif-wall" id="gifWall">
+    <!-- JS will populate -->
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SCENE 6 — THE INVITATION
+══════════════════════════════════ -->
+<section class="scene" id="s6">
+  <div class="inv-wrap show">
+    <!-- Web corners -->
+    <svg class="wc tl" viewBox="0 0 100 100"><path d="M0,0L100,0M0,0L0,100M0,0L100,100M0,0L70,100M0,0L100,70M0,0Q50,0 50,50M0,0Q0,50 50,50M0,20Q20,20 20,50Q20,80 50,80" stroke="#E8192C" stroke-width="1" fill="none"/></svg>
+    <svg class="wc tr" viewBox="0 0 100 100"><path d="M0,0L100,0M0,0L0,100M0,0L100,100M0,0L70,100M0,0L100,70M0,0Q50,0 50,50M0,0Q0,50 50,50" stroke="#E8192C" stroke-width="1" fill="none"/></svg>
+    <svg class="wc bl" viewBox="0 0 100 100"><path d="M0,0L100,0M0,0L0,100M0,0L100,100M0,0L70,100M0,0L100,70M0,0Q50,0 50,50M0,0Q0,50 50,50" stroke="#E8192C" stroke-width="1" fill="none"/></svg>
+    <svg class="wc br" viewBox="0 0 100 100"><path d="M0,0L100,0M0,0L0,100M0,0L100,100M0,0L70,100M0,0L100,70M0,0Q50,0 50,50M0,0Q0,50 50,50" stroke="#E8192C" stroke-width="1" fill="none"/></svg>
+
+    <div class="inv-box">
+      <div class="inv-eye">★ TOP SECRET — PERSONAL TRANSMISSION ★</div>
+      <div class="inv-title">YOU'RE<br>CORDIALLY<br>INVITED</div>
+      <div class="inv-to">To: The Most Important Person in My Universe 💫</div>
+
+      <div class="inv-divider"><div class="inv-dl"></div><div class="inv-di">🕷️</div><div class="inv-dl"></div></div>
+
+      <div class="inv-body">
+        Hey. Yes, you. 🌸<br><br>
+        I know Spider-Man isn't exactly <em>your thing.</em><br>
+        But going to the movies with you is <strong>definitely my thing.</strong><br><br>
+        <em>Spider-Man: Brand New Day</em> is coming — and I want to watch it<br>
+        with my favourite person in the whole multiverse.<br><br>
+        No prep required. I've got you. 🕷️
+      </div>
+
+      <!-- Floating Spidey gif -->
+      <img class="inv-gif-float"
+        src="https://media.tenor.com/0t18HZrwm8EAAAAC/spider-man-spiderman.gif"
+        onerror="this.src='https://media.giphy.com/media/3ohzdIuqJoo8QdKlnW/giphy.gif';this.onerror=null"
+        alt="Spider-Man">
+
+      <div class="ticket">
+        <div class="ticket-top">
+          <div class="t-movie">SPIDER-MAN</div>
+          <div class="t-sub">★ BRAND NEW DAY ★</div>
+        </div>
+        <div class="ticket-bottom">
+          <div class="t-field"><div class="t-label">OCCASION</div><div class="t-val">MOVIE DATE 🎬</div></div>
+          <div class="t-field"><div class="t-label">SEATS</div><div class="t-val">2 ❤️</div></div>
+          <div class="t-field"><div class="t-label">SNACKS</div><div class="t-val">UNLIMITED 🍿</div></div>
+          <div class="t-field"><div class="t-label">GUEST</div><div class="t-val" style="color:var(--gold)">YOU ⭐</div></div>
+        </div>
+      </div>
+
+      <ul class="promises" id="promises">
+        <li class="promise"><div class="p-icon">🙅</div><div class="p-text"><strong>Zero nerd prep needed.</strong> I'll explain every character, every plot point, every reference. You'll feel like a Marvel expert by the credits.</div></li>
+        <li class="promise"><div class="p-icon">🍿</div><div class="p-text"><strong>Full snack coverage.</strong> Popcorn, nachos, drinks — whatever your heart wants. My treat, no exceptions.</div></li>
+        <li class="promise"><div class="p-icon">🤝</div><div class="p-text"><strong>Hand-holding is mandatory.</strong> During action scenes, emotional scenes, and also just because.</div></li>
+        <li class="promise"><div class="p-icon">😭</div><div class="p-text"><strong>Fair warning:</strong> I may get emotional. Spidey movies do things to me. Please pretend not to notice — or don't, I don't really mind.</div></li>
+        <li class="promise"><div class="p-icon">💬</div><div class="p-text"><strong>Post-movie food run</strong> and a full debrief over dinner. Optional but you're going to love the movie so it won't be optional.</div></li>
+      </ul>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SCENE 7 — THE QUESTION
+══════════════════════════════════ -->
+<section class="scene" id="s7">
+  <!-- Big spider web bg -->
+  <div class="bg-web">
+    <svg width="min(700px,100vw)" height="min(700px,100vw)" viewBox="0 0 700 700">
+      <g stroke="white" fill="none" stroke-width="0.8">
+        <line x1="350" y1="0" x2="350" y2="700"/><line x1="0" y1="350" x2="700" y2="350"/>
+        <line x1="0" y1="0" x2="700" y2="700"/><line x1="700" y1="0" x2="0" y2="700"/>
+        <line x1="175" y1="0" x2="525" y2="700"/><line x1="525" y1="0" x2="175" y2="700"/>
+        <line x1="0" y1="175" x2="700" y2="525"/><line x1="0" y1="525" x2="700" y2="175"/>
+        <circle cx="350" cy="350" r="80"/><circle cx="350" cy="350" r="165"/>
+        <circle cx="350" cy="350" r="250"/><circle cx="350" cy="350" r="340"/>
+      </g>
+    </svg>
+  </div>
+
+  <div style="position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center">
+    <!-- Heart-swinging Spidey -->
+    <img class="q-gif"
+      src="https://media.tenor.com/fUB3NWdPpjwAAAAC/spiderman-spider.gif"
+      onerror="this.src='https://media.giphy.com/media/3o6Zt6KHxJTbXCnSvu/giphy.gif';this.onerror=null"
+      alt="Spider-Man heart">
+
+    <div class="q-text show">WILL YOU<br>BE MY<br>DATE?</div>
+    <div class="q-small show" style="transition-delay:.2s">Spider-Man: Brand New Day — the most important question of 2025 🕷️❤️</div>
+
+    <div class="btn-wrap">
+      <button class="btn btn-y" onclick="doYes()">🕷️ YES — LET'S GO!</button>
+      <button class="btn btn-n" id="noBtn" onclick="doNo()">Maybe... no?</button>
+    </div>
+
+    <div class="resp" id="respY">
+      <img class="resp-gif"
+        src="https://media.tenor.com/R3B5AnRCG7sAAAAC/spiderman-dance.gif"
+        onerror="this.style.display='none'" alt="Spider-Man dance">
+      <div class="resp-title">🎉 SHE SAID YES!! 🎉</div>
+      <p class="resp-body">
+        THIS. IS. THE. BEST. DAY. IN. ANY. UNIVERSE.<br><br>
+        <strong style="color:var(--gold);font-size:22px">It's officially a date. 🕷️❤️</strong><br><br>
+        Get ready for popcorn, web-slinging, emotional geek moments,<br>
+        and the absolute best company I could ever ask for.<br><br>
+        <em style="color:rgba(255,255,255,.4);font-size:14px">"With great love comes great movie dates." — Spider-Man (probably)</em>
+      </p>
+    </div>
+
+    <div class="resp" id="respN">
+      <div class="resp-title" id="noT">⚠️ ERROR 404</div>
+      <p class="resp-body" id="noB">That answer is not valid in this universe. Try again. 🕷️</p>
+    </div>
+  </div>
+</section>
+
+<div id="foot">
+  <div class="foot-txt">crafted with 🕷️ and <strong>way too much love</strong> · for the most important person in my multiverse</div>
+</div>
+
+<!-- THREE.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ════════════════════════════════════
+   BOOT
+════════════════════════════════════ */
+setTimeout(()=>{
+  document.getElementById('boot').classList.add('out');
+  setTimeout(()=>document.getElementById('boot').remove(),1300);
+},3200);
+
+/* ════════════════════════════════════
+   CURSOR
+════════════════════════════════════ */
+const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+let mx=0,my=0,tx=0,ty=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=(mx-12)+'px';cur.style.top=(my-12)+'px';
+});
+(function loop(){
+  tx+=(mx-tx)*.18;ty+=(my-ty)*.18;
+  cur2.style.left=tx+'px';cur2.style.top=ty+'px';
+  requestAnimationFrame(loop);
+})();
+
+/* ════════════════════════════════════
+   LIVE WEB CANVAS
+════════════════════════════════════ */
+const wc=document.getElementById('webCanvas');
+const wx=wc.getContext('2d');
+let W,H,wNodes=[];
+function rszW(){W=wc.width=window.innerWidth;H=wc.height=window.innerHeight}
+rszW();window.addEventListener('resize',()=>{rszW();initW()});
+
+function initW(){
+  wNodes=[];
+  const cols=Math.ceil(W/110)+2,rows=Math.ceil(H/90)+2;
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++)
+    wNodes.push({
+      x:c*110+(r%2?55:0)+(Math.random()-.5)*30,
+      y:r*90+(Math.random()-.5)*20,
+      vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25
+    });
+}
+initW();
+
+let wmx=W/2,wmy=H/2;
+document.addEventListener('mousemove',e=>{wmx=e.clientX;wmy=e.clientY});
+
+// Click web shoot
+document.addEventListener('click',e=>{
+  // Spawn radial web lines from click
+  for(let i=0;i<10;i++){
+    const ang=Math.random()*Math.PI*2;
+    const len=80+Math.random()*120;
+    const s=document.createElement('div');
+    s.className='streak';
+    s.style.cssText=`left:${e.clientX}px;top:${e.clientY}px;width:${len}px;transform:rotate(${ang}rad)`;
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),800);
+  }
+  // Red spark particles
+  for(let i=0;i<8;i++) spawnPart(e.clientX,e.clientY,'232,25,44');
+  for(let i=0;i<4;i++) spawnPart(e.clientX,e.clientY,'255,215,0');
+});
+
+function drawW(){
+  wx.clearRect(0,0,W,H);
+  wNodes.forEach(n=>{
+    n.x+=n.vx;n.y+=n.vy;
+    if(n.x<-100||n.x>W+100)n.vx*=-1;
+    if(n.y<-80||n.y>H+80)n.vy*=-1;
+    const dx=n.x-wmx,dy=n.y-wmy,d=Math.hypot(dx,dy);
+    if(d<100){n.x+=dx/d*1.5;n.y+=dy/d*1.5}
+  });
+  for(let i=0;i<wNodes.length;i++){
+    for(let j=i+1;j<wNodes.length;j++){
+      const dx=wNodes[j].x-wNodes[i].x,dy=wNodes[j].y-wNodes[i].y;
+      const d=Math.hypot(dx,dy);
+      if(d<160){
+        wx.beginPath();
+        wx.strokeStyle=`rgba(255,255,255,${(1-d/160)*.8})`;
+        wx.lineWidth=d<70?.9:.4;
+        wx.moveTo(wNodes[i].x,wNodes[i].y);wx.lineTo(wNodes[j].x,wNodes[j].y);wx.stroke();
+      }
+    }
+    wx.beginPath();wx.arc(wNodes[i].x,wNodes[i].y,1.2,0,Math.PI*2);
+    wx.fillStyle='rgba(255,255,255,.25)';wx.fill();
+  }
+  requestAnimationFrame(drawW);
+}
+drawW();
+
+/* ════════════════════════════════════
+   PARTICLE SYSTEM
+════════════════════════════════════ */
+const pc=document.getElementById('confetti');
+const px=pc.getContext('2d');
+let parts=[];
+function rszP(){pc.width=window.innerWidth;pc.height=window.innerHeight}
+rszP();window.addEventListener('resize',rszP);
+
+function spawnPart(x,y,col,size=4,vy=-2){
+  const ang=Math.random()*Math.PI*2;
+  const spd=Math.random()*5+2;
+  parts.push({x,y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd+vy,
+    life:1,col,r:size*(Math.random()+.5),rot:Math.random()*360,rspd:(Math.random()-.5)*12});
+}
+function drawParts(){
+  px.clearRect(0,0,pc.width,pc.height);
+  parts=parts.filter(p=>p.life>0);
+  parts.forEach(p=>{
+    px.save();px.translate(p.x,p.y);px.rotate(p.rot*Math.PI/180);
+    px.globalAlpha=p.life;
+    px.fillStyle=`rgb(${p.col})`;
+    px.fillRect(-p.r,-p.r,p.r*2,p.r*2);
+    px.restore();
+    p.x+=p.vx;p.y+=p.vy;p.vy+=.12;p.rot+=p.rspd;p.life-=.025;
+  });
+  requestAnimationFrame(drawParts);
+}
+drawParts();
+
+function confettiBurst(){
+  pc.style.display='block';
+  const cols=['232,25,44','255,215,0','255,255,255','10,22,40','255,107,157'];
+  for(let i=0;i<200;i++){
+    setTimeout(()=>{
+      const x=Math.random()*window.innerWidth;
+      spawnPart(x,-10,cols[Math.floor(Math.random()*cols.length)],6,Math.random()*4+1);
+    },i*15);
+  }
+}
+
+/* ════════════════════════════════════
+   THREE.JS SPIDER-VERSE
+════════════════════════════════════ */
+(function initThree(){
+  const canvas=document.getElementById('threeCanvas');
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setClearColor(0x000000,0);
+
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(60,1,.1,1000);
+  camera.position.set(0,0,28);
+
+  // Resize
+  function rszThree(){
+    const s2=document.getElementById('s2');
+    const W=s2.clientWidth,H=s2.clientHeight;
+    renderer.setSize(W,H);
+    camera.aspect=W/H;camera.updateProjectionMatrix();
+  }
+  rszThree();window.addEventListener('resize',rszThree);
+
+  // Lighting
+  scene.add(new THREE.AmbientLight(0x222244,.8));
+  const dL=new THREE.DirectionalLight(0xffffff,1.2);dL.position.set(5,8,10);scene.add(dL);
+  const rL=new THREE.PointLight(0xE8192C,2,30);rL.position.set(-8,0,5);scene.add(rL);
+  const bL=new THREE.PointLight(0x4488ff,1.5,25);bL.position.set(8,2,5);scene.add(bL);
+  const gL=new THREE.PointLight(0xcc44ff,1.2,20);gL.position.set(0,-6,8);scene.add(gL);
+
+  // Character data
+  const chars=[
+    {name:'TOBEY',color:0xC41230,accent:0x003399,r:1.4,y:0},
+    {name:'ANDREW',color:0xCC0000,accent:0x0d1b8c,r:1.4,y:0},
+    {name:'TOM',color:0xE8192C,accent:0x003399,r:1.4,y:0},
+    {name:'MILES',color:0x111111,accent:0xE8192C,r:1.4,y:0},
+    {name:'GWEN',color:0xffffff,accent:0xff69b4,r:1.3,y:0},
+  ];
+
+  const spiders=[];
+  const orbitR=9,orbitSpeed=[.4,.35,.3,.38,.32];
+
+  chars.forEach((c,i)=>{
+    const g=new THREE.Group();
+    const ang=(i/chars.length)*Math.PI*2;
+
+    // Body sphere
+    const body=new THREE.Mesh(
+      new THREE.SphereGeometry(c.r,32,32),
+      new THREE.MeshPhongMaterial({color:c.color,shininess:80,specular:0x333333})
+    );
+    body.position.y=-.3;g.add(body);
+
+    // Head sphere
+    const head=new THREE.Mesh(
+      new THREE.SphereGeometry(c.r*.75,32,32),
+      new THREE.MeshPhongMaterial({color:c.color,shininess:60})
+    );
+    head.position.y=c.r*.9;g.add(head);
+
+    // Eye patches
+    [-1,1].forEach(side=>{
+      const eye=new THREE.Mesh(
+        new THREE.SphereGeometry(.28,16,16),
+        new THREE.MeshPhongMaterial({color:0xffffff,emissive:0xffffff,emissiveIntensity:.3})
+      );
+      eye.position.set(side*.32,.25+c.r*.9,.65);g.add(eye);
+    });
+
+    // Web stripe lines
+    for(let li=0;li<8;li++){
+      const pts=[];
+      const startAng=li/8*Math.PI*2;
+      for(let t=0;t<=1;t+=.1){
+        pts.push(new THREE.Vector3(
+          Math.sin(startAng+t*Math.PI*.5)*c.r*1.01,
+          Math.cos(t*Math.PI)*c.r*.8-.3,
+          Math.cos(startAng+t*Math.PI*.5)*c.r*1.01
+        ));
+      }
+      const geom=new THREE.BufferGeometry().setFromPoints(pts);
+      const mat=new THREE.LineBasicMaterial({color:0x000000,opacity:.25,transparent:true});
+      g.add(new THREE.Line(geom,mat));
+    }
+
+    // Glow sphere
+    const glow=new THREE.Mesh(
+      new THREE.SphereGeometry(c.r*1.4,20,20),
+      new THREE.MeshBasicMaterial({color:c.color,transparent:true,opacity:.06,side:THREE.BackSide})
+    );
+    g.add(glow);
+
+    // Position on orbit
+    g.position.set(Math.cos(ang)*orbitR,Math.sin(ang*.5)*3,Math.sin(ang)*orbitR*.5);
+    g.userData={initAng:ang,orbitSpd:orbitSpeed[i],floatOff:i*.8,name:c.name,accent:c.accent};
+    scene.add(g);
+    spiders.push(g);
+  });
+
+  // Central spider web particle system
+  const webPts=[];
+  const webCount=3000;
+  for(let i=0;i<webCount;i++){
+    const r=Math.random()*15+2;
+    const ang=Math.random()*Math.PI*2;
+    const y=(Math.random()-.5)*12;
+    webPts.push(new THREE.Vector3(Math.cos(ang)*r,y,Math.sin(ang)*r));
+  }
+  const webGeom=new THREE.BufferGeometry().setFromPoints(webPts);
+  const webMat=new THREE.PointsMaterial({color:0xffffff,size:.04,transparent:true,opacity:.15});
+  scene.add(new THREE.Points(webGeom,webMat));
+
+  // Web lines connecting orbits
+  for(let i=0;i<20;i++){
+    const ang1=Math.random()*Math.PI*2,ang2=Math.random()*Math.PI*2;
+    const r1=Math.random()*10+2,r2=Math.random()*10+2;
+    const lPts=[
+      new THREE.Vector3(Math.cos(ang1)*r1,(Math.random()-.5)*8,Math.sin(ang1)*r1*.5),
+      new THREE.Vector3(Math.cos(ang2)*r2,(Math.random()-.5)*8,Math.sin(ang2)*r2*.5)
+    ];
+    const lg=new THREE.BufferGeometry().setFromPoints(lPts);
+    const lm=new THREE.LineBasicMaterial({color:0xE8192C,transparent:true,opacity:.08});
+    scene.add(new THREE.Line(lg,lm));
+  }
+
+  // Mouse interaction
+  let mouseX3=0,mouseY3=0;
+  document.addEventListener('mousemove',e=>{
+    mouseX3=(e.clientX/window.innerWidth-.5)*2;
+    mouseY3=-(e.clientY/window.innerHeight-.5)*2;
+  });
+
+  let t3=0;
+  function anim3(){
+    requestAnimationFrame(anim3);
+    t3+=.008;
+
+    spiders.forEach((g,i)=>{
+      const ang=g.userData.initAng+t3*g.userData.orbitSpd;
+      g.position.x=Math.cos(ang)*orbitR+mouseX3*2;
+      g.position.y=Math.sin(t3*.6+g.userData.floatOff)*2.5+mouseY3;
+      g.position.z=Math.sin(ang)*orbitR*.5;
+      g.rotation.y=ang+Math.PI;
+      g.rotation.z=Math.sin(t3*.8+i)*.15;
+      // Scale pulse
+      const sc=1+Math.sin(t3*1.5+i*.7)*.06;
+      g.scale.set(sc,sc,sc);
+    });
+
+    camera.position.x=mouseX3*3;
+    camera.position.y=mouseY3*2;
+    camera.lookAt(0,0,0);
+
+    rL.intensity=1.5+Math.sin(t3*2)*.8;
+    bL.intensity=1.2+Math.cos(t3*1.7)*.6;
+
+    renderer.render(scene,camera);
+  }
+  anim3();
+})();
+
+/* ════════════════════════════════════
+   GIF STRIPS (Scene 3)
+════════════════════════════════════ */
+// Using all Spider-Man folder images
+const gifSources=[
+  {src:'Spider-Man/spiderman-swing.jpg',label:'Swinging'},
+  {src:'Spider-Man/Spiderman_dancing.gif',label:'Dancing'},
+  {src:'Spider-Man/spiderman-spider.gif',label:'Heart'},
+  {src:'Spider-Man/spider-man-spiderman.png',label:'Classic'},
+  {src:'Spider-Man/spider-man-miles.gif',label:'Miles'},
+  {src:'Spider-Man/pider-man-pointing.jpg',label:'Pointing'},
+  {src:'Spider-Man/Spider-man.gif',label:'Spidey'},
+  {src:'Spider-Man/spider-man2.gif',label:'Amazing'},
+  {src:'Spider-Man/Swiing.gif',label:'Swinging Pose'},
+  {src:'Spider-Man/thor.png',label:'Thunder'},
+  {src:'Spider-Man/venom.gif',label:'Venom'},
+];
+
+function makeStrips(){
+  const s1=document.getElementById('strip1');
+  const s2=document.getElementById('strip2');
+  // Double the set for seamless looping
+  [...gifSources,...gifSources].forEach(g=>{
+    ['s1','s2'].forEach(sid=>{
+      const strip=sid==='s1'?s1:s2;
+      const div=document.createElement('div');
+      div.className='gif-item';
+      const img=document.createElement('img');
+      img.src=g.src;img.alt=g.label;
+      const span=document.createElement('span');span.textContent=g.label;
+      div.appendChild(img);div.appendChild(span);
+      strip.appendChild(div);
+    });
+  });
+}
+makeStrips();
+
+/* ════════════════════════════════════
+   GIF WALL (Scene 5)
+════════════════════════════════════ */
+const wallData=[
+  {name:'TOBEY MAGUIRE',sub:'Spider-Man (2002)',badge:'EARTH-96283',
+   col:'#ff9090',g:'rgba(255,100,100,.15)',b:'rgba(255,100,100,.3)',
+   src:'Posters/2002.webp'},
+  {name:'ANDREW GARFIELD',sub:'Amazing (2012)',badge:'EARTH-120703',
+   col:'#aaddff',g:'rgba(100,180,255,.15)',b:'rgba(100,180,255,.3)',
+   src:'Posters/2012.webp'},
+  {name:'TOM HOLLAND',sub:'MCU (2016)',badge:'EARTH-616',
+   col:'#ff6060',g:'rgba(232,25,44,.2)',b:'rgba(232,25,44,.4)',
+   src:'Posters/2016.webp'},
+  {name:'MILES MORALES',sub:'Into the Spider-Verse',badge:'EARTH-1610',
+   col:'#cc88ff',g:'rgba(150,50,255,.15)',b:'rgba(150,50,255,.3)',
+   src:'Posters/SBTSV Hero Banner_updated.jpg'},
+  {name:'SPIDER-GWEN',sub:'Ghost-Spider',badge:'EARTH-65',
+   col:'#ffaadd',g:'rgba(255,100,180,.15)',b:'rgba(255,100,180,.3)',
+   src:'Posters/ghost spider.webp'},
+  {name:'NO WAY HOME',sub:'Three Peters',badge:'MCU 2021',
+   col:'#ffd700',g:'rgba(255,215,0,.12)',b:'rgba(255,215,0,.3)',
+   src:'Posters/no way home.jpg'},
+];
+
+function buildWall(){
+  const wall=document.getElementById('gifWall');
+  wallData.forEach((d,i)=>{
+    const card=document.createElement('div');
+    card.className='gif-card';
+    card.style.cssText=`--card-c:${d.col};--card-g:${d.g};--card-b:${d.b};transition-delay:${i*.08}s`;
+    card.innerHTML=`
+      <img src="${d.src}" alt="${d.name}">
+      <div class="gif-card-name">${d.name}</div>
+      <div class="gif-card-sub">${d.sub}</div>
+      <div class="gif-card-badge">${d.badge}</div>`;
+    wall.appendChild(card);
+  });
+}
+buildWall();
+
+/* ════════════════════════════════════
+   SCROLL SYSTEM
+════════════════════════════════════ */
+const scenes=['s1','s2','s3','s4','s5','s6','s7'];
+const dots=document.querySelectorAll('.cdot');
+
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting&&e.intersectionRatio>.35){
+      const i=scenes.indexOf(e.target.id);
+      dots.forEach((d,j)=>d.classList.toggle('on',j===i));
+    }
+    // reveal children
+    e.target.querySelectorAll('.show,.show-left,.show-right').forEach(el=>{
+      if(e.isIntersecting) el.classList.add('in');
+    });
+  });
+},{threshold:.35});
+
+scenes.forEach(id=>{const el=document.getElementById(id);if(el)io.observe(el)});
+
+dots.forEach((d,i)=>{
+  d.addEventListener('click',()=>document.getElementById(scenes[i]).scrollIntoView({behavior:'smooth'}));
+});
+
+// Gif wall reveal
+const wallIo=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.gif-card').forEach((c,i)=>{
+        setTimeout(()=>c.classList.add('in'),i*80);
+      });
+      wallIo.unobserve(e.target);
+    }
+  });
+},{threshold:.1});
+const gw=document.getElementById('gifWall');if(gw)wallIo.observe(gw);
+
+// Promises reveal
+const promIo=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.promise').forEach((p,i)=>{
+        setTimeout(()=>p.classList.add('in'),i*120);
+      });
+      promIo.unobserve(e.target);
+    }
+  });
+},{threshold:.1});
+const pl=document.getElementById('promises');if(pl)promIo.observe(pl);
+
+/* ════════════════════════════════════
+   BUTTONS
+════════════════════════════════════ */
+let noN=0;
+const noMsgs=[
+  {t:'⚠️ DOES NOT COMPUTE',b:'Error 404: Answer not found.\nThe red button on the left is correct. 🕷️'},
+  {t:'🕷️ SPIDEY SENSE IS TINGLING...',b:'He senses a wrong answer.\nEven Mysterio couldn\'t trick his way out of a movie date.'},
+  {t:'😤 TRY. AGAIN.',b:'I will make puppy eyes at you in real life.\nRight now. In real time. Choose YES.'},
+  {t:'🚨 FINAL WARNING 🚨',b:'At this point even all three Spider-Men are concerned.\nThey say: please click YES.'},
+  {t:'💀 OKAY. I AM BEGGING.',b:'On my knees. Literally. Metaphorically. Whatever works.\n🕷️❤️ just... please. YES. ❤️🕷️'},
+  {t:'🤡 YOU ARE DOING THIS ON PURPOSE',b:'I see you. I know what you\'re doing.\nThe YES button. It\'s right there. It loves you.'},
+];
+
+function doYes(){
+  document.getElementById('respN').style.display='none';
+  const r=document.getElementById('respY');
+  r.style.display='none';void r.offsetWidth;r.style.display='block';
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+  confettiBurst();
+  setTimeout(confettiBurst,700);setTimeout(confettiBurst,1400);
+}
+
+function doNo(){
+  noN++;
+  const btn=document.getElementById('noBtn');
+  const fs=Math.max(11,20-noN*2);
+  btn.style.fontSize=fs+'px';
+  btn.style.padding=Math.max(8,16-noN*2)+'px '+Math.max(14,30-noN*4)+'px';
+  if(noN>=2){
+    btn.style.transform=`translate(${(Math.random()-.5)*280}px,${(Math.random()-.5)*120}px)`;
+  }
+  const msg=noMsgs[Math.min(noN-1,noMsgs.length-1)];
+  const r=document.getElementById('respN');
+  r.style.display='none';void r.offsetWidth;r.style.display='block';
+  document.getElementById('noT').textContent=msg.t;
+  document.getElementById('noB').textContent=msg.b;
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+</body>
+</html>
