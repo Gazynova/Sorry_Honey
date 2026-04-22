@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASCII FACE CAM</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
+
+  :root {
+    --green: #00ff41;
+    --dim-green: #00aa2b;
+    --dark-green: #003b0f;
+    --bg: #020c02;
+    --scanline: rgba(0,255,65,0.03);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* CRT scanlines */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      var(--scanline) 2px,
+      var(--scanline) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* CRT vignette */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.85) 100%);
+    pointer-events: none;
+    z-index: 99;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .title {
+    font-family: 'VT323', monospace;
+    font-size: clamp(28px, 5vw, 52px);
+    color: var(--green);
+    text-shadow: 0 0 10px var(--green), 0 0 30px var(--dim-green);
+    letter-spacing: 8px;
+    animation: flicker 6s infinite;
+  }
+
+  .subtitle {
+    font-size: 11px;
+    color: var(--dim-green);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  @keyframes flicker {
+    0%, 95%, 100% { opacity: 1; }
+    96% { opacity: 0.7; }
+    97% { opacity: 1; }
+    98% { opacity: 0.5; }
+    99% { opacity: 1; }
+  }
+
+  .main-container {
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    width: 100%;
+    height: calc(100vh - 120px);
+    padding: 0 20px;
+  }
+
+  .panel {
+    border: 1px solid var(--dim-green);
+    background: rgba(0,20,0,0.6);
+    position: relative;
+  }
+
+  .panel-label {
+    position: absolute;
+    top: -10px;
+    left: 12px;
+    background: var(--bg);
+    padding: 0 6px;
+    font-size: 10px;
+    color: var(--dim-green);
+    letter-spacing: 3px;
+  }
+
+  /* Corner decorations */
+  .panel::before, .panel::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: var(--green);
+    border-style: solid;
+  }
+  .panel::before { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+  .panel::after  { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+
+  /* Hidden video */
+  #video { display: none; }
+  #canvas-src { display: none; }
+
+  /* ASCII output */
+  #ascii-output {
+    display: block;
+    padding: 16px 18px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 3px;
+    line-height: 1.0;
+    color: var(--green);
+    white-space: pre;
+    letter-spacing: 0.6px;
+    text-shadow: 0 0 6px var(--green);
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  /* Side panel */
+  .side-panel {
+    width: 180px;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+
+  .control-group label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--dim-green);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    flex: 1;
+    height: 2px;
+    background: var(--dark-green);
+    outline: none;
+    border: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 10px;
+    background: var(--green);
+    cursor: pointer;
+    box-shadow: 0 0 6px var(--green);
+  }
+
+  .slider-val {
+    font-size: 11px;
+    color: var(--green);
+    width: 28px;
+    text-align: right;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 8px 0;
+    background: transparent;
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn:hover {
+    background: var(--dark-green);
+    box-shadow: 0 0 14px var(--dim-green);
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn.active {
+    background: var(--dark-green);
+    box-shadow: inset 0 0 10px rgba(0,255,65,0.2), 0 0 10px var(--dim-green);
+  }
+
+  .btn-danger {
+    border-color: #ff4141;
+    color: #ff4141;
+  }
+  .btn-danger:hover { background: rgba(255,65,65,0.1); box-shadow: 0 0 14px rgba(255,65,65,0.4); }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--dark-green);
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--dim-green);
+  }
+
+  .stat-row span:last-child {
+    color: var(--green);
+  }
+
+  .palette-select {
+    width: 100%;
+    background: rgba(0,20,0,0.8);
+    border: 1px solid var(--dim-green);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    padding: 5px 8px;
+    outline: none;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+
+  .palette-select option {
+    background: #020c02;
+  }
+
+  /* Color mode toggle visual */
+  .color-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .status-bar {
+    margin-top: 12px;
+    font-size: 9px;
+    color: var(--dim-green);
+    letter-spacing: 2px;
+    text-align: center;
+    width: 100%;
+    max-width: 720px;
+  }
+
+  .blink {
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  #start-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(2,12,2,0.9);
+    z-index: 10;
+    gap: 14px;
+    cursor: pointer;
+  }
+
+  #start-overlay .big-text {
+    font-family: 'VT323', monospace;
+    font-size: 32px;
+    color: var(--green);
+    text-shadow: 0 0 20px var(--green);
+    letter-spacing: 6px;
+    animation: flicker 3s infinite;
+  }
+
+  #start-overlay .small-text {
+    font-size: 10px;
+    color: var(--dim-green);
+    letter-spacing: 4px;
+    text-align: center;
+    max-width: 320px;
+    line-height: 1.8;
+  }
+
+  .ascii-panel-wrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+    min-width: 0;
+  }
+
+  .ascii-panel-wrapper .panel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title">◈ ASCII FACE CAM ◈</div>
+  <div class="subtitle"><span class="color-indicator"></span>Live Terminal Vision System v1.0</div>
+</div>
+
+<div class="main-container">
+
+  <!-- ASCII Display Panel -->
+  <div class="ascii-panel-wrapper">
+    <div class="panel" id="ascii-panel">
+      <span class="panel-label">// OUTPUT STREAM</span>
+      <pre id="ascii-output">
+      CAMERA NOT INITIALIZED
+
+      AWAITING INPUT SIGNAL...
+
+      [ CLICK INITIALIZE TO BEGIN ]
+      </pre>
+      <div id="start-overlay">
+        <div class="big-text">[ INITIALIZE ]</div>
+        <div class="small-text">CLICK TO ACTIVATE CAMERA<br>ALLOW CAMERA PERMISSIONS<br>WHEN PROMPTED</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls Panel -->
+  <div class="panel side-panel">
+    <span class="panel-label">// CONTROLS</span>
+
+    <div class="control-group">
+      <label>Resolution</label>
+      <div class="slider-row">
+        <input type="range" id="res-slider" min="50" max="200" value="100" step="10">
+        <span class="slider-val" id="res-val">100%</span>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label>Contrast</label>
+      <div class="slider-row">
+        <input type="range" id="contrast-slider" min="80" max="350" value="180" step="10">
+        <span class="slider-val" id="contrast-val">180</span>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label>Brightness</label>
+      <div class="slider-row">
+        <input type="range" id="bright-slider" min="-100" max="100" value="5" step="5">
+        <span class="slider-val" id="bright-val">5</span>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label>Char Palette</label>
+      <select class="palette-select" id="palette-select">
+        <option value="standard">STANDARD</option>
+        <option value="blocks">BLOCKS</option>
+        <option value="minimal">MINIMAL</option>
+        <option value="matrix">MATRIX</option>
+        <option value="dots">DOTS</option>
+        <option value="binary">BINARY</option>
+      </select>
+    </div>
+
+    <hr class="divider">
+
+    <button class="btn" id="invert-btn">INVERT</button>
+    <button class="btn" id="mirror-btn">MIRROR</button>
+    <button class="btn" id="color-btn">COLOR MODE</button>
+
+    <hr class="divider">
+
+    <div class="stat-row"><span>FPS</span><span id="fps-val">--</span></div>
+    <div class="stat-row"><span>COLS</span><span id="cols-val">--</span></div>
+    <div class="stat-row"><span>ROWS</span><span id="rows-val">--</span></div>
+
+    <hr class="divider">
+
+    <button class="btn btn-danger" id="stop-btn">STOP</button>
+  </div>
+
+</div>
+
+<div class="status-bar">
+  <span id="status-text">SYSTEM READY — AWAITING CAMERA INIT</span>
+  <span class="blink"> █</span>
+</div>
+
+<!-- Hidden elements -->
+<video id="video" autoplay playsinline></video>
+<canvas id="canvas-src"></canvas>
+
+<script>
+const PALETTES = {
+  standard: ' .\'`^",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$',
+  blocks:   ' ░▒▓█',
+  minimal:  ' .:+*#@',
+  matrix:   ' .:;|/\\-+X01',
+  dots:     ' ·:•●',
+  binary:   ' 01',
+};
+
+let stream = null;
+let animId = null;
+let lastFrameTime = performance.now();
+let frameCount = 0;
+let fps = 0;
+
+// Settings
+let cols = 140;
+let resolutionMultiplier = 1.0; // multiplier for dynamic resolution
+let contrast = 180;
+let brightness = 5;
+let invert = false;
+let mirror = true;
+let colorMode = false;
+let palette = PALETTES.standard;
+
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas-src');
+const ctx = canvas.getContext('2d', { willReadFrequently: true });
+const asciiOut = document.getElementById('ascii-output');
+const overlay = document.getElementById('start-overlay');
+const statusText = document.getElementById('status-text');
+
+// Sliders
+const resSlider = document.getElementById('res-slider');
+const contrastSlider = document.getElementById('contrast-slider');
+const brightSlider = document.getElementById('bright-slider');
+const resVal = document.getElementById('res-val');
+const contrastVal = document.getElementById('contrast-val');
+const brightVal = document.getElementById('bright-val');
+const paletteSelect = document.getElementById('palette-select');
+
+resSlider.addEventListener('input', () => {
+  resolutionMultiplier = parseFloat(resSlider.value) / 100;
+  resVal.textContent = Math.round(resSlider.value);
+});
+
+contrastSlider.addEventListener('input', () => {
+  contrast = parseInt(contrastSlider.value);
+  contrastVal.textContent = contrast;
+});
+
+brightSlider.addEventListener('input', () => {
+  brightness = parseInt(brightSlider.value);
+  brightVal.textContent = brightness;
+});
+
+paletteSelect.addEventListener('change', () => {
+  palette = PALETTES[paletteSelect.value];
+});
+
+document.getElementById('invert-btn').addEventListener('click', function() {
+  invert = !invert;
+  this.classList.toggle('active', invert);
+});
+
+document.getElementById('mirror-btn').addEventListener('click', function() {
+  mirror = !mirror;
+  this.classList.toggle('active', mirror);
+});
+
+document.getElementById('color-btn').addEventListener('click', function() {
+  colorMode = !colorMode;
+  this.classList.toggle('active', colorMode);
+  asciiOut.style.textShadow = colorMode ? 'none' : '0 0 4px var(--green)';
+});
+
+document.getElementById('stop-btn').addEventListener('click', stopCamera);
+
+overlay.addEventListener('click', startCamera);
+
+async function startCamera() {
+  try {
+    statusText.textContent = 'REQUESTING CAMERA ACCESS...';
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { width: { ideal: 1280 }, height: { ideal: 960 }, facingMode: 'user' }
+    });
+    video.srcObject = stream;
+    await video.play();
+    overlay.style.display = 'none';
+    statusText.textContent = 'CAMERA ACTIVE — RENDERING ASCII STREAM';
+    renderLoop();
+  } catch (e) {
+    statusText.textContent = 'ERROR: ' + e.message.toUpperCase();
+    overlay.querySelector('.big-text').textContent = '[ RETRY ]';
+    overlay.querySelector('.small-text').textContent = 'CAMERA ACCESS DENIED OR UNAVAILABLE\nCHECK BROWSER PERMISSIONS';
+  }
+}
+
+function stopCamera() {
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+  }
+  if (animId) { cancelAnimationFrame(animId); animId = null; }
+  asciiOut.style.color = '';
+  asciiOut.textContent = '\n\n      STREAM TERMINATED\n\n      [ CLICK INITIALIZE TO RESTART ]';
+  overlay.style.display = 'flex';
+  overlay.querySelector('.big-text').textContent = '[ RESTART ]';
+  overlay.querySelector('.small-text').textContent = 'CLICK TO REACTIVATE CAMERA';
+  statusText.textContent = 'STREAM STOPPED';
+}
+
+function applyContrast(value, contrast, brightness) {
+  let v = value + brightness;
+  v = ((v - 128) * (contrast / 100)) + 128;
+  return Math.max(0, Math.min(255, v));
+}
+
+function pixelToChar(brightness) {
+  const index = Math.floor((brightness / 255) * (palette.length - 1));
+  return palette[index] || ' ';
+}
+
+function renderLoop() {
+  if (!stream) return;
+
+  // FPS tracking
+  frameCount++;
+  const now = performance.now();
+  if (now - lastFrameTime >= 1000) {
+    fps = frameCount;
+    frameCount = 0;
+    lastFrameTime = now;
+    document.getElementById('fps-val').textContent = fps;
+  }
+
+  // Dynamically calculate cols based on container width
+  const containerWidth = asciiOut.offsetWidth - 32; // subtract padding
+  const charWidth = 2.4; // approximate character width in pixels (3x tighter to fit 3x more characters)
+  cols = Math.floor(containerWidth / charWidth);
+  cols = Math.max(40, Math.min(600, cols)); // clamp between 40-600 (3x larger)
+  cols = Math.floor(cols * resolutionMultiplier); // apply user multiplier
+
+  const aspectRatio = video.videoWidth / video.videoHeight;
+  // chars are approx 0.5 wide as tall
+  const rows = Math.floor(cols / aspectRatio * 0.47);
+
+  canvas.width = cols;
+  canvas.height = rows;
+
+  ctx.save();
+  if (mirror) {
+    ctx.translate(cols, 0);
+    ctx.scale(-1, 1);
+  }
+  ctx.drawImage(video, 0, 0, cols, rows);
+  ctx.restore();
+
+  const imageData = ctx.getImageData(0, 0, cols, rows);
+  const data = imageData.data;
+
+  document.getElementById('cols-val').textContent = cols;
+  document.getElementById('rows-val').textContent = rows;
+
+  let output = '';
+  const colorSpans = [];
+
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const idx = (y * cols + x) * 4;
+      let r = data[idx], g = data[idx+1], b = data[idx+2];
+
+      // Luma
+      let luma = 0.299 * r + 0.587 * g + 0.114 * b;
+      luma = applyContrast(luma, contrast, brightness);
+
+      if (invert) luma = 255 - luma;
+
+      const char = pixelToChar(luma);
+
+      if (colorMode) {
+        const cr = applyContrast(r, contrast, brightness);
+        const cg = applyContrast(g, contrast, brightness);
+        const cb = applyContrast(b, contrast, brightness);
+        colorSpans.push({ char, r: Math.round(cr), g: Math.round(cg), b: Math.round(cb) });
+      } else {
+        output += char;
+      }
+    }
+    if (colorMode) colorSpans.push({ char: '\n' });
+    else output += '\n';
+  }
+
+  if (colorMode) {
+    // Build colored HTML
+    let html = '';
+    for (const s of colorSpans) {
+      if (s.char === '\n') { html += '\n'; continue; }
+      html += `<span style="color:rgb(${s.r},${s.g},${s.b})">${s.char === '<' ? '&lt;' : s.char === '&' ? '&amp;' : s.char}</span>`;
+    }
+    asciiOut.innerHTML = html;
+  } else {
+    asciiOut.textContent = output;
+    asciiOut.style.color = '';
+  }
+
+  animId = requestAnimationFrame(renderLoop);
+}
+</script>
+</body>
+</html>

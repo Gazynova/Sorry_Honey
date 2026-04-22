@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FINGER STRINGS — Holographic Instrument</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@100;300;400&family=Orbitron:wght@400;700;900&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --c1: #00f5ff;
+  --c2: #ff006e;
+  --c3: #00ff9f;
+  --c4: #ffbe0b;
+  --c5: #8338ec;
+  --bg: #020408;
+  --ui: rgba(0,245,255,0.08);
+  --ui-border: rgba(0,245,255,0.2);
+}
+
+body {
+  background: var(--bg);
+  color: var(--c1);
+  font-family: 'Exo 2', sans-serif;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Animated grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: gridDrift 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes gridDrift {
+  from { background-position: 0 0; }
+  to   { background-position: 40px 40px; }
+}
+
+/* Corner HUD pieces */
+.hud-corner {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  pointer-events: none;
+  z-index: 50;
+}
+.hud-corner::before, .hud-corner::after {
+  content: '';
+  position: absolute;
+  background: var(--c1);
+}
+.hud-corner::before { width: 2px; height: 100%; top: 0; }
+.hud-corner::after  { width: 100%; height: 2px; top: 0; }
+.hud-corner.tl { top: 16px; left: 16px; }
+.hud-corner.tr { top: 16px; right: 16px; transform: scaleX(-1); }
+.hud-corner.bl { bottom: 16px; left: 16px; transform: scaleY(-1); }
+.hud-corner.br { bottom: 16px; right: 16px; transform: scale(-1); }
+
+/* Title */
+.title-bar {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 50;
+  pointer-events: none;
+}
+.title-main {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(14px, 2.5vw, 22px);
+  font-weight: 900;
+  letter-spacing: 8px;
+  color: var(--c1);
+  text-shadow: 0 0 20px var(--c1), 0 0 40px rgba(0,245,255,0.4);
+}
+.title-sub {
+  font-size: 9px;
+  letter-spacing: 5px;
+  color: rgba(0,245,255,0.5);
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+/* Status bar bottom */
+.status-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  z-index: 50;
+  pointer-events: none;
+}
+.stat-chip {
+  background: var(--ui);
+  border: 1px solid var(--ui-border);
+  padding: 4px 14px;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(0,245,255,0.7);
+  font-family: 'Orbitron', sans-serif;
+}
+.stat-chip span {
+  color: var(--c1);
+  font-weight: 700;
+}
+
+/* Legend panel */
+.legend {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--ui);
+  border: 1px solid var(--ui-border);
+  padding: 16px 14px;
+  z-index: 50;
+  min-width: 160px;
+  pointer-events: none;
+}
+.legend-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: rgba(0,245,255,0.5);
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--ui-border);
+  padding-bottom: 6px;
+}
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 7px 0;
+  font-size: 10px;
+  color: rgba(255,255,255,0.6);
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* Instructions panel */
+.instructions {
+  position: fixed;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--ui);
+  border: 1px solid var(--ui-border);
+  padding: 16px 14px;
+  z-index: 50;
+  min-width: 150px;
+  pointer-events: none;
+}
+.inst-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: rgba(0,245,255,0.5);
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--ui-border);
+  padding-bottom: 6px;
+}
+.inst-row {
+  font-size: 9px;
+  color: rgba(255,255,255,0.5);
+  margin: 6px 0;
+  line-height: 1.5;
+}
+.inst-row strong {
+  color: var(--c1);
+  font-weight: 400;
+}
+
+/* Main canvas area */
+#canvas-container {
+  position: relative;
+  border: 1px solid rgba(0,245,255,0.12);
+  box-shadow: 0 0 60px rgba(0,245,255,0.05), inset 0 0 60px rgba(0,0,0,0.5);
+}
+
+#video { display: none; }
+
+#overlay-canvas {
+  display: block;
+  position: absolute;
+  top: 0; left: 0;
+}
+
+#bg-canvas {
+  display: block;
+}
+
+/* Overlay splash */
+#splash {
+  position: fixed;
+  inset: 0;
+  background: rgba(2,4,8,0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  gap: 20px;
+  cursor: pointer;
+}
+.splash-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(24px, 5vw, 48px);
+  font-weight: 900;
+  color: var(--c1);
+  text-shadow: 0 0 30px var(--c1);
+  letter-spacing: 10px;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { text-shadow: 0 0 20px var(--c1), 0 0 40px rgba(0,245,255,0.4); }
+  50% { text-shadow: 0 0 40px var(--c1), 0 0 80px rgba(0,245,255,0.6), 0 0 120px rgba(0,245,255,0.2); }
+}
+.splash-sub {
+  font-size: 11px;
+  letter-spacing: 5px;
+  color: rgba(0,245,255,0.5);
+  max-width: 340px;
+  text-align: center;
+  line-height: 2;
+}
+.splash-btn {
+  margin-top: 10px;
+  border: 1px solid var(--c1);
+  padding: 12px 40px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  letter-spacing: 6px;
+  color: var(--c1);
+  background: rgba(0,245,255,0.05);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0 20px rgba(0,245,255,0.1);
+}
+.splash-btn:hover {
+  background: rgba(0,245,255,0.12);
+  box-shadow: 0 0 40px rgba(0,245,255,0.3);
+}
+
+.loading-text {
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: rgba(0,245,255,0.4);
+  display: none;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+</style>
+</head>
+<body>
+
+<div class="hud-corner tl"></div>
+<div class="hud-corner tr"></div>
+<div class="hud-corner bl"></div>
+<div class="hud-corner br"></div>
+
+<div class="title-bar">
+  <div class="title-main">◈ FINGER STRINGS ◈</div>
+  <div class="title-sub">Holographic Instrument Interface</div>
+</div>
+
+<div class="instructions">
+  <div class="inst-title">// HOW TO PLAY</div>
+  <div class="inst-row"><strong>SHOW</strong> both hands to camera</div>
+  <div class="inst-row"><strong>EXTEND</strong> fingers to stretch strings</div>
+  <div class="inst-row"><strong>PLUCK</strong> by snapping fingers fast</div>
+  <div class="inst-row"><strong>PINCH</strong> to mute a string</div>
+  <div class="inst-row"><strong>MOVE</strong> hands to bend pitch</div>
+</div>
+
+<div class="legend">
+  <div class="legend-title">// STRING PAIRS</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#00f5ff;color:#00f5ff"></div> INDEX ↔ INDEX</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#ff006e;color:#ff006e"></div> MIDDLE ↔ MIDDLE</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#00ff9f;color:#00ff9f"></div> RING ↔ RING</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#ffbe0b;color:#ffbe0b"></div> PINKY ↔ PINKY</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#8338ec;color:#8338ec"></div> THUMB ↔ THUMB</div>
+</div>
+
+<div id="canvas-container">
+  <canvas id="bg-canvas"></canvas>
+  <canvas id="overlay-canvas"></canvas>
+</div>
+
+<div class="status-bar">
+  <div class="stat-chip">HANDS <span id="hand-count">0</span></div>
+  <div class="stat-chip">STRINGS <span id="string-count">0</span></div>
+  <div class="stat-chip">FPS <span id="fps-disp">--</span></div>
+  <div class="stat-chip">TENSION <span id="tension-disp">--</span></div>
+</div>
+
+<div id="splash">
+  <div class="splash-title">FINGER STRINGS</div>
+  <div class="splash-sub">A HOLOGRAPHIC STRING INSTRUMENT<br>CONTROLLED BY YOUR BARE HANDS</div>
+  <button class="splash-btn" id="start-btn">INITIALIZE</button>
+  <div class="loading-text" id="loading-text">LOADING AI HAND TRACKER...</div>
+</div>
+
+<video id="video" autoplay playsinline></video>
+
+<!-- MediaPipe -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+<script>
+// ─── CONFIG ────────────────────────────────────────────────────────────────
+const STRING_COLORS = ['#00f5ff','#ff006e','#00ff9f','#ffbe0b','#8338ec'];
+const FINGER_TIPS   = [4, 8, 12, 16, 20]; // thumb, index, middle, ring, pinky
+const FINGER_NAMES  = ['THUMB','INDEX','MIDDLE','RING','PINKY'];
+
+// Physics params
+const SEGMENTS     = 28;   // points per string
+const GRAVITY      = 0.18;
+const DAMPING      = 0.91;
+const TENSION_K    = 0.7;
+const ITERATIONS   = 18;
+
+// ─── SETUP ─────────────────────────────────────────────────────────────────
+const video     = document.getElementById('video');
+const bgCanvas  = document.getElementById('bg-canvas');
+const ovCanvas  = document.getElementById('overlay-canvas');
+const bgCtx     = bgCanvas.getContext('2d');
+const ovCtx     = ovCanvas.getContext('2d');
+const container = document.getElementById('canvas-container');
+
+let W, H;
+function resize() {
+  const maxW = Math.min(window.innerWidth  - 340, 1000);
+  const maxH = Math.min(window.innerHeight - 120, 700);
+  const ar   = 4/3;
+  if (maxW / ar <= maxH) { W = maxW; H = Math.round(maxW / ar); }
+  else                   { H = maxH; W = Math.round(maxH * ar); }
+  bgCanvas.width = ovCanvas.width = W;
+  bgCanvas.height = ovCanvas.height = H;
+  container.style.width  = W + 'px';
+  container.style.height = H + 'px';
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ─── PHYSICS STRING CLASS ───────────────────────────────────────────────────
+class PhysicsString {
+  constructor(color, fingerIndex) {
+    this.color = color;
+    this.fingerIndex = fingerIndex;
+    this.pts = [];         // {x,y,px,py,pinned}
+    this.restLen = 0;
+    this.active = false;
+    this.tension = 0;
+    this.pluckTimer = 0;
+    this.lastMidY = 0;
+    this.vibeAmt = 0;
+    this.vibePhase = Math.random() * Math.PI * 2;
+    this.vibeFreq = 6 + fingerIndex * 1.5;
+    this.hue = 0;
+    this._initPts(0, 0, W, 0);
+  }
+
+  _initPts(x1, y1, x2, y2) {
+    this.pts = [];
+    for (let i = 0; i <= SEGMENTS; i++) {
+      const t = i / SEGMENTS;
+      const x = x1 + (x2 - x1) * t;
+      const y = y1 + (y2 - y1) * t;
+      this.pts.push({ x, y, px: x, py: y,
+        pinned: (i === 0 || i === SEGMENTS) });
+    }
+    this.restLen = Math.hypot(x2 - x1, y2 - y1) / SEGMENTS;
+  }
+
+  setEndpoints(x1, y1, x2, y2) {
+    if (!this.active) {
+      this._initPts(x1, y1, x2, y2);
+      this.active = true;
+    } else {
+      // pin first and last
+      this.pts[0].x = x1; this.pts[0].y = y1;
+      this.pts[0].px = x1; this.pts[0].py = y1;
+      this.pts[SEGMENTS].x = x2; this.pts[SEGMENTS].y = y2;
+      this.pts[SEGMENTS].px = x2; this.pts[SEGMENTS].py = y2;
+      this.restLen = Math.hypot(x2 - x1, y2 - y1) / SEGMENTS;
+    }
+  }
+
+  update(dt) {
+    if (!this.active) return;
+    const pts = this.pts;
+    const rest = this.restLen;
+
+    // Verlet integrate (skip pinned)
+    for (let i = 1; i < SEGMENTS; i++) {
+      const p = pts[i];
+      const vx = (p.x - p.px) * DAMPING;
+      const vy = (p.y - p.py) * DAMPING;
+      p.px = p.x; p.py = p.y;
+      p.x += vx;
+      p.y += vy + GRAVITY;
+    }
+
+    // Vibration impulse after pluck
+    if (this.vibeAmt > 0.5) {
+      this.vibePhase += this.vibeFreq * 0.08;
+      const mid = Math.floor(SEGMENTS / 2);
+      for (let i = 1; i < SEGMENTS; i++) {
+        const env = Math.sin(i / SEGMENTS * Math.PI);
+        pts[i].y += Math.sin(this.vibePhase + i * 0.4) * this.vibeAmt * env * 2.5;
+      }
+      this.vibeAmt *= 0.92;
+    }
+
+    // Constraints
+    for (let iter = 0; iter < ITERATIONS; iter++) {
+      // keep first/last pinned
+      pts[0].x = pts[0].px; pts[0].y = pts[0].py;
+      pts[SEGMENTS].x = pts[SEGMENTS].px; pts[SEGMENTS].y = pts[SEGMENTS].py;
+
+      for (let i = 0; i < SEGMENTS; i++) {
+        const a = pts[i], b = pts[i+1];
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const dist = Math.sqrt(dx*dx + dy*dy) || 0.001;
+        const diff = (dist - rest * TENSION_K) / dist * 0.5;
+        const ox = dx * diff, oy = dy * diff;
+        if (!a.pinned) { a.x += ox; a.y += oy; }
+        if (!b.pinned) { b.x -= ox; b.y -= oy; }
+      }
+    }
+
+    // Compute tension (avg deviation from straight line)
+    const p0 = pts[0], pN = pts[SEGMENTS];
+    let totalDev = 0;
+    for (let i = 1; i < SEGMENTS; i++) {
+      const t = i / SEGMENTS;
+      const lx = p0.x + (pN.x - p0.x) * t;
+      const ly = p0.y + (pN.y - p0.y) * t;
+      totalDev += Math.hypot(pts[i].x - lx, pts[i].y - ly);
+    }
+    this.tension = totalDev / SEGMENTS;
+
+    // Mid point velocity for pluck detection
+    const midPt = pts[Math.floor(SEGMENTS/2)];
+    const midVy = midPt.y - midPt.py;
+    if (Math.abs(midVy) > 4) this.pluck();
+    this.lastMidY = midPt.y;
+  }
+
+  pluck() {
+    this.vibeAmt = Math.min(this.vibeAmt + 6, 20);
+    playStringSound(this.fingerIndex, this.tension);
+  }
+
+  draw(ctx, t) {
+    if (!this.active || this.pts.length < 2) return;
+    const pts = this.pts;
+    const glow = Math.min(1, this.vibeAmt / 10);
+    const tensionGlow = Math.min(1, this.tension / 30);
+
+    // Build path
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i <= SEGMENTS; i++) {
+      ctx.lineTo(pts[i].x, pts[i].y);
+    }
+
+    // Outer glow
+    ctx.save();
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur  = 18 + glow * 40 + tensionGlow * 20;
+    ctx.strokeStyle = this.color;
+    ctx.lineWidth   = 1.5 + glow * 2;
+    ctx.globalAlpha = 0.5 + glow * 0.4;
+    ctx.stroke();
+
+    // Inner bright core
+    ctx.shadowBlur  = 5;
+    ctx.lineWidth   = 0.8;
+    ctx.globalAlpha = 0.9 + glow * 0.1;
+    ctx.strokeStyle = '#ffffff';
+    ctx.stroke();
+    ctx.restore();
+
+    // Endpoint orbs
+    this._drawOrb(ctx, pts[0].x, pts[0].y, glow);
+    this._drawOrb(ctx, pts[SEGMENTS].x, pts[SEGMENTS].y, glow);
+
+    // Tension label at midpoint
+    if (this.tension > 3) {
+      const mid = pts[Math.floor(SEGMENTS/2)];
+      ctx.save();
+      ctx.font = '9px "Orbitron", sans-serif';
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = Math.min(1, this.tension / 15);
+      ctx.textAlign = 'center';
+      ctx.fillText(FINGER_NAMES[this.fingerIndex], mid.x, mid.y - 12);
+      ctx.restore();
+    }
+  }
+
+  _drawOrb(ctx, x, y, glow) {
+    const r = 7 + glow * 5;
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.3, this.color);
+    grad.addColorStop(1, 'transparent');
+    ctx.save();
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur  = 20 + glow * 30;
+    ctx.globalAlpha = 0.9;
+    ctx.fillStyle   = grad;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+// ─── AUDIO ENGINE ───────────────────────────────────────────────────────────
+let audioCtx = null;
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+const BASE_FREQS = [130.81, 196.00, 261.63, 329.63, 392.00]; // C3 G3 C4 E4 G4
+
+function playStringSound(fingerIndex, tension) {
+  if (!audioCtx) return;
+  const freq = BASE_FREQS[fingerIndex] * (1 + tension * 0.008);
+  const master = audioCtx.createGain();
+  master.gain.setValueAtTime(0.18, audioCtx.currentTime);
+  master.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.6);
+  master.connect(audioCtx.destination);
+
+  // Fundamental + harmonics
+  [1, 2, 3, 4].forEach((h, i) => {
+    const osc = audioCtx.createOscillator();
+    const g   = audioCtx.createGain();
+    osc.type  = 'triangle';
+    osc.frequency.value = freq * h;
+    g.gain.value = [0.6, 0.3, 0.15, 0.08][i];
+    osc.connect(g); g.connect(master);
+    osc.start(); osc.stop(audioCtx.currentTime + 1.6);
+  });
+
+  // Pluck click
+  const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.05, audioCtx.sampleRate);
+  const d   = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i/d.length, 3);
+  const src = audioCtx.createBufferSource();
+  const ng  = audioCtx.createGain();
+  src.buffer = buf; ng.gain.value = 0.15;
+  src.connect(ng); ng.connect(master);
+  src.start();
+}
+
+// ─── PARTICLE SYSTEM ────────────────────────────────────────────────────────
+const particles = [];
+function spawnParticles(x, y, color, count = 8) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 3;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: 1, color,
+      size: 1 + Math.random() * 2
+    });
+  }
+}
+
+function updateParticles() {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx; p.y += p.vy;
+    p.vx *= 0.96; p.vy *= 0.96;
+    p.life -= 0.03;
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+}
+
+function drawParticles(ctx) {
+  particles.forEach(p => {
+    ctx.save();
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle   = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur  = 6;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+}
+
+// ─── STRINGS SETUP ──────────────────────────────────────────────────────────
+const strings = FINGER_TIPS.map((_, i) => new PhysicsString(STRING_COLORS[i], i));
+
+// ─── HAND DATA ──────────────────────────────────────────────────────────────
+let handData = [];
+let frameT = 0;
+
+function getFingerTip(hand, tipIdx) {
+  const lm = hand.landmarks[tipIdx];
+  // Mirror X because video is mirrored
+  return { x: (1 - lm.x) * W, y: lm.y * H };
+}
+
+function classifyHand(hand) {
+  // Use handedness label from MediaPipe
+  return hand.handedness;
+}
+
+// ─── RENDER BACKGROUND (video) ──────────────────────────────────────────────
+function drawBackground() {
+  bgCtx.clearRect(0, 0, W, H);
+  if (video.readyState >= 2) {
+    bgCtx.save();
+    bgCtx.translate(W, 0);
+    bgCtx.scale(-1, 1);
+    bgCtx.globalAlpha = 0.22;
+    bgCtx.drawImage(video, 0, 0, W, H);
+    bgCtx.restore();
+    // Dark overlay
+    bgCtx.fillStyle = 'rgba(2,4,8,0.78)';
+    bgCtx.fillRect(0, 0, W, H);
+  } else {
+    bgCtx.fillStyle = '#020408';
+    bgCtx.fillRect(0, 0, W, H);
+  }
+}
+
+// ─── MAIN LOOP ──────────────────────────────────────────────────────────────
+let lastTime = performance.now();
+let frameCount = 0, fps = 0, fpsTimer = 0;
+
+function loop(now) {
+  requestAnimationFrame(loop);
+  const dt = Math.min((now - lastTime) / 16, 3);
+  lastTime = now;
+  frameCount++;
+  fpsTimer += now - (fpsTimer === 0 ? now : lastTime);
+
+  if (now - fpsTimer > 1000) {
+    fps = frameCount;
+    frameCount = 0;
+    fpsTimer = now;
+    document.getElementById('fps-disp').textContent = fps;
+  }
+
+  frameT += 0.016;
+
+  drawBackground();
+  ovCtx.clearRect(0, 0, W, H);
+
+  // Find left and right hand
+  let leftHand = null, rightHand = null;
+  handData.forEach(h => {
+    if (h.handedness === 'Left')  leftHand  = h;
+    if (h.handedness === 'Right') rightHand = h;
+  });
+
+  document.getElementById('hand-count').textContent = handData.length;
+
+  let activeStrings = 0;
+
+  // For each finger pair
+  FINGER_TIPS.forEach((tipIdx, fi) => {
+    const str = strings[fi];
+
+    if (leftHand && rightHand) {
+      const lPt = getFingerTip(leftHand,  tipIdx);
+      const rPt = getFingerTip(rightHand, tipIdx);
+
+      // Check if pluck happened (large sudden movement)
+      const wasTension = str.tension;
+      str.setEndpoints(lPt.x, lPt.y, rPt.x, rPt.y);
+      str.update(dt);
+
+      // Spawn particles on high tension
+      if (str.tension > 20 && wasTension < 15) {
+        const mid = str.pts[Math.floor(SEGMENTS/2)];
+        spawnParticles(mid.x, mid.y, str.color, 12);
+      }
+
+      str.draw(ovCtx, frameT);
+      activeStrings++;
+    } else {
+      // Gradually relax if no hands
+      if (str.active) {
+        str.update(dt);
+        str.draw(ovCtx, frameT);
+      }
+    }
+  });
+
+  // Draw hand skeleton dots
+  handData.forEach(hand => {
+    hand.landmarks.forEach((lm, idx) => {
+      const x = (1 - lm.x) * W, y = lm.y * H;
+      const isTip = FINGER_TIPS.includes(idx);
+      ovCtx.save();
+      ovCtx.beginPath();
+      ovCtx.arc(x, y, isTip ? 6 : 3, 0, Math.PI * 2);
+      ovCtx.fillStyle = isTip ? '#ffffff' : 'rgba(0,245,255,0.35)';
+      ovCtx.shadowColor = '#00f5ff';
+      ovCtx.shadowBlur  = isTip ? 16 : 6;
+      ovCtx.fill();
+      ovCtx.restore();
+    });
+
+    // Draw hand connections
+    drawHandConnections(hand);
+  });
+
+  updateParticles();
+  drawParticles(ovCtx);
+
+  document.getElementById('string-count').textContent = activeStrings;
+
+  // Aggregate tension
+  const maxT = Math.max(...strings.map(s => s.tension));
+  document.getElementById('tension-disp').textContent =
+    maxT > 1 ? maxT.toFixed(1) : '--';
+}
+
+// Hand skeleton connections (MediaPipe standard)
+const CONNECTIONS = [
+  [0,1],[1,2],[2,3],[3,4],
+  [0,5],[5,6],[6,7],[7,8],
+  [0,9],[9,10],[10,11],[11,12],
+  [0,13],[13,14],[14,15],[15,16],
+  [0,17],[17,18],[18,19],[19,20],
+  [5,9],[9,13],[13,17]
+];
+
+function drawHandConnections(hand) {
+  CONNECTIONS.forEach(([a, b]) => {
+    const lmA = hand.landmarks[a], lmB = hand.landmarks[b];
+    const x1 = (1-lmA.x)*W, y1 = lmA.y*H;
+    const x2 = (1-lmB.x)*W, y2 = lmB.y*H;
+    ovCtx.save();
+    ovCtx.strokeStyle = 'rgba(0,245,255,0.2)';
+    ovCtx.lineWidth   = 1;
+    ovCtx.shadowColor = '#00f5ff';
+    ovCtx.shadowBlur  = 4;
+    ovCtx.beginPath();
+    ovCtx.moveTo(x1, y1);
+    ovCtx.lineTo(x2, y2);
+    ovCtx.stroke();
+    ovCtx.restore();
+  });
+}
+
+// ─── MEDIAPIPE HANDS ────────────────────────────────────────────────────────
+let handsModel = null;
+let mpCamera   = null;
+
+async function initMediaPipe() {
+  handsModel = new Hands({
+    locateFile: (file) =>
+      `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+  });
+
+  handsModel.setOptions({
+    maxNumHands: 2,
+    modelComplexity: 1,
+    minDetectionConfidence: 0.7,
+    minTrackingConfidence: 0.65,
+  });
+
+  handsModel.onResults(results => {
+    handData = [];
+    if (results.multiHandLandmarks) {
+      results.multiHandLandmarks.forEach((lms, i) => {
+        handData.push({
+          landmarks: lms,
+          handedness: results.multiHandedness[i].label
+        });
+      });
+    }
+  });
+
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: { width: 1280, height: 720, facingMode: 'user' }
+  });
+  video.srcObject = stream;
+  await video.play();
+
+  mpCamera = new Camera(video, {
+    onFrame: async () => {
+      await handsModel.send({ image: video });
+    },
+    width: 1280,
+    height: 720
+  });
+  mpCamera.start();
+}
+
+// ─── START ──────────────────────────────────────────────────────────────────
+document.getElementById('start-btn').addEventListener('click', async () => {
+  initAudio();
+  const btn = document.getElementById('start-btn');
+  const loadTxt = document.getElementById('loading-text');
+  btn.textContent = 'INITIALIZING...';
+  btn.style.opacity = '0.5';
+  loadTxt.style.display = 'block';
+
+  try {
+    await initMediaPipe();
+    document.getElementById('splash').style.display = 'none';
+    requestAnimationFrame(loop);
+  } catch (e) {
+    btn.textContent = 'RETRY';
+    btn.style.opacity = '1';
+    loadTxt.textContent = 'ERROR: ' + e.message.toUpperCase();
+  }
+});
+</script>
+</body>
+</html>
